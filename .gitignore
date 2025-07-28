@@ -21,3 +21,16 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+~/.psysh_history
+
+# PsySH/Tinker historial
+.psysh_history
+~/.config/psysh/
+# Tinker history files
+.psysh_history
+elect*
+as $*
+howTableStructure*
+"Caretaker::with*
+"Pet::with*
+traints*
