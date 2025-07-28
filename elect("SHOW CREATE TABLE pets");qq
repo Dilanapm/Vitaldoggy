@@ -1,0 +1,44 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#6231
+    [34mall[39m: [
+      [34;4mApp\Models\Caretaker[39;24m {#6345
+        [34mid[39m: [35m1[39m,
+        [34muser_id[39m: [35m3[39m,
+        [34mshelter_id[39m: [35m1[39m,
+        [34mposition[39m: "[32mDirector General[39m",
+        [34muser[39m: [34;4mApp\Models\User[39;24m {#6268
+          [34mid[39m: [35m3[39m,
+          [34mname[39m: "[32mAdmin VitalDoggy[39m",
+        },
+        [34mshelter[39m: [34;4mApp\Models\Shelter[39;24m {#6342
+          [34mid[39m: [35m1[39m,
+          [34mname[39m: "[32mAlbergue Huellitas Felices[39m",
+        },
+      },
+      [34;4mApp\Models\Caretaker[39;24m {#5583
+        [34mid[39m: [35m2[39m,
+        [34muser_id[39m: [35m4[39m,
+        [34mshelter_id[39m: [35m1[39m,
+        [34mposition[39m: "[32mCuidador Veterinario[39m",
+        [34muser[39m: [34;4mApp\Models\User[39;24m {#6266
+          [34mid[39m: [35m4[39m,
+          [34mname[39m: "[32mJuan Pérez[39m",
+        },
+        [34mshelter[39m: [34;4mApp\Models\Shelter[39;24m {#6342},
+      },
+      [34;4mApp\Models\Caretaker[39;24m {#6228
+        [34mid[39m: [35m3[39m,
+        [34muser_id[39m: [35m5[39m,
+        [34mshelter_id[39m: [35m2[39m,
+        [34mposition[39m: "[32mCoordinador de Adopciones[39m",
+        [34muser[39m: [34;4mApp\Models\User[39;24m {#6265
+          [34mid[39m: [35m5[39m,
+          [34mname[39m: "[32mMaría García[39m",
+        },
+        [34mshelter[39m: [34;4mApp\Models\Shelter[39;24m {#6218
+          [34mid[39m: [35m2[39m,
+          [34mname[39m: "[32mRefugio Patitas Amorosas[39m",
+        },
+      },
+    ],
+  }
+
