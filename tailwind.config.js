@@ -1,6 +1,3 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
-import forms from '@tailwindcss/forms';
-
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -8,14 +5,22 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
     ],
-
+    
+    darkMode: 'class', // Asegúrate de que esto esté configurado como 'class'
+    
     theme: {
         extend: {
+            colors: {
+                primary: '#FF6B6B',
+                secondary: '#4ECDC4',
+                accent: '#FFD166',
+                dark: '#1A535C',
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Figtree', 'sans-serif'],
             },
         },
     },
-
-    plugins: [forms],
+    
+    plugins: [require('@tailwindcss/forms')],
 };
