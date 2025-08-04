@@ -64,6 +64,7 @@ Route::prefix('donor')->middleware(['auth', 'verified' , 'role:donor'])->group(f
 
 // Rutas para cuidadores (caretakers)
 Route::prefix('caretaker')->middleware(['auth', 'verified', 'role:caretaker'])->group(function () {
+    // Route:prefix 'caretaker' se utiliza para agrupar las rutas relacionadas con los cuidadores.
     // Redirigir el dashboard a la lista de cuidadores
     Route::get('/dashboard', function () {
         return redirect()->route('caretaker.caretakers.index');

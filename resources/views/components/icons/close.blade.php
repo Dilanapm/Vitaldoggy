@@ -1,0 +1,7 @@
+@props(['class' => 'w-6 h-6', 'id' => null])
+
+<svg {{ $attributes->merge(['class' => $class]) }} 
+     @if($id) id="{{ $id }}" @endif
+     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+</svg>
