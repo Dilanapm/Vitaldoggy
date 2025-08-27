@@ -14,19 +14,19 @@
                 <!-- Navigation Links -->
                 <nav class="flex items-center space-x-6">
                     <a href="#servicios" 
-                        class="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition duration-200 font-medium">
+                        class="text-dark dark:text-white hover:text-orange-200 dark:hover:text-primary transition duration-200 font-medium">
                         Servicios
                     </a>
                     <a href="#" 
-                        class="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition duration-200 font-medium">
+                        class="text-dark dark:text-white hover:text-orange-200 dark:hover:text-primary transition duration-200 font-medium">
                         Adopciones
                     </a>
                     <a href="#" 
-                        class="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition duration-200 font-medium">
+                        class="text-dark dark:text-white hover:text-orange-200 dark:hover:text-primary transition duration-200 font-medium">
                         Donaciones
                     </a>
                     <a href="#" 
-                        class="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition duration-200 font-medium">
+                        class="text-dark dark:text-white hover:text-orange-200 dark:hover:text-primary transition duration-200 font-medium">
                         Albergues
                     </a>
                 </nav>
@@ -47,13 +47,13 @@
                             </a>
                         @else
                             <a href="{{ route('login') }}"
-                                class="px-4 py-2 rounded-lg bg-white/80 text-dark hover:bg-white transition duration-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
+                                class="px-4 py-2 rounded-lg bg-dark text-white hover:bg-dark/90 transition duration-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
                                 Iniciar sesión
                             </a>
 
                             @if (Route::has('register'))
                                 <a href="{{ route('register') }}"
-                                    class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition duration-200">
+                                    class="px-4 py-2 rounded-lg  bg-primary text-white hover:bg-primary/90 transition duration-200">
                                     Registrarse
                                 </a>
                             @endif
@@ -94,7 +94,7 @@
                     @else
                         <div class="p-4 space-y-3">
                             <a href="{{ route('login') }}"
-                                class="block w-full text-center px-4 py-3 rounded-lg bg-white text-dark border border-gray-300 hover:bg-gray-50 transition duration-200 font-medium dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                                class="block w-full text-center px-4 py-3 rounded-lg  bg-dark text-white hover:bg-dark/90 border-gray-300  transition duration-200 font-medium dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                                 Iniciar sesión
                             </a>
 

@@ -29,10 +29,9 @@
         <div class="hidden md:flex md:w-1/2 bg-primary/10 dark:bg-primary/5 flex-col justify-center items-center p-8">
             <div class="max-w-md mx-auto text-center">
                 <!-- Logo Grande -->
+                
                 <div class="flex justify-center mb-6">
-                    <svg class="w-32 h-32 text-primary" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
-                    </svg>
+                    <img src="{{ asset('logo.png') }}" alt="Logo VitalDoggy" class="w-40 h-40 object-contain">
                 </div>
                 
                 <!-- Nombre de la App -->

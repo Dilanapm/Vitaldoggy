@@ -29,10 +29,10 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#FF6B6B',
-                        secondary: '#4ECDC4',
-                        accent: '#FFD166',
-                        dark: '#1A535C',
+                        primary: '#7C444F',
+                        secondary: '#9F5255',
+                        accent: '#E16A54',
+                        dark: '#F39E60',
                     }
                 }
             },
@@ -64,8 +64,15 @@
     <div class="relative min-h-screen">
         <!-- Hero background -->
         <div
-            class="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 dark:from-primary/5 dark:to-secondary/5 -z-10">
+            class="absolute inset-0 -z-10
+        bg-gradient-to-br
+        from-[#751629]
+        via-[#f56e5c] 
+        via-70% 
+        to-[#6b1f11]
+        dark:bg-gradient-to-r dark:from-primary/5 dark:to-secondary/5">
         </div>
+
 
         <!-- Navigation Component -->
         <x-navigation />
@@ -77,14 +84,14 @@
                     <h1 class="text-4xl lg:text-5xl font-bold text-dark dark:text-white leading-tight">
                         Encuentra un nuevo amigo y dale una segunda oportunidad
                     </h1>
-                    <p class="text-lg text-gray-600 dark:text-gray-300">
+                    <p class="text-lg text-gray-200 dark:text-gray-300">
                         En VitalDoggy conectamos a mascotas que necesitan un hogar con personas que desean adoptar.
                         Conoce nuestros albergues asociados y cambia una vida para siempre.
                     </p>
                     <div class="flex flex-wrap gap-4">
                         <a href="{{ route('register') }}"
                             class="px-6 py-3 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition duration-200">
-                            Adoptar una mascota
+                                Adoptar una mascota
                         </a>
                         <a href="#servicios"
                             class="px-6 py-3 rounded-lg bg-white border border-primary text-primary font-medium hover:bg-gray-50 transition duration-200 dark:bg-gray-800 dark:border-primary dark:hover:bg-gray-700">
@@ -97,7 +104,7 @@
                         <img src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
                             alt="Perro feliz" class="w-full h-80 object-cover object-center">
                     </div>
-                    <div class="absolute -bottom-6 -right-6 bg-accent rounded-lg p-4 shadow-lg">
+                    <div class="absolute -bottom-6 -right-6 bg-primary rounded-lg p-4 shadow-lg">
                         <p class="text-dark font-semibold">+500 adopciones exitosas</p>
                     </div>
                 </div>
@@ -261,7 +268,7 @@
                 <div class="flex flex-wrap justify-center gap-4">
                     <a href="{{ route('register') }}"
                         class="px-6 py-3 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition duration-200">
-                        Regístrate ahora
+                            Adoptar una mascota
                     </a>
                     <a href="#"
                         class="px-6 py-3 rounded-lg bg-transparent border border-white text-white font-medium hover:bg-white/10 transition duration-200">
@@ -277,10 +284,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div>
                         <div class="flex items-center space-x-2 mb-4">
-                            <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" />
-                            </svg>
+                            <img src="{{ asset('logo.png') }}" alt="Logo VitalDoggy" class="w-20 h-20 object-contain">
                             <span class="text-xl font-bold">VitalDoggy</span>
                         </div>
                         <p class="text-gray-400">
@@ -292,7 +296,7 @@
                         <h4 class="text-lg font-semibold mb-4">Enlaces rápidos</h4>
                         <ul class="space-y-2 text-gray-400">
                             <li><a href="#" class="hover:text-primary transition">Inicio</a></li>
-                            <li><a href="#" class="hover:text-primary transition">Adopciones</a></li>
+                            <li><a href="{{ route('pets.index') }}" class="hover:text-primary transition">Adopciones</a></li>
                             <li><a href="#" class="hover:text-primary transition">Donaciones</a></li>
                             <li><a href="#" class="hover:text-primary transition">Albergues</a></li>
                         </ul>

@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 
 
 // Rutas públicas
+use App\Http\Controllers\PetController;
+
+// Página principal
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+// Ruta pública para el listado de mascotas
+Route::get('/mascotas', [PetController::class, 'index'])->name('pets.index');
 
 // Rutas de verificación de email
 Route::get('/email/verify', function () {
