@@ -5,29 +5,31 @@
     <nav class="container mx-auto px-6 py-4">
         <div class="flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <img src="{{ asset('logo.png') }}" alt="Logo VitalDoggy" class="w-20 h-20 object-contain">
-                <span class="text-2xl font-bold text-dark dark:text-white">VitalDoggy</span>
+                <a href="{{ route('home') }}" class="flex items-center space-x-2 hover:opacity-80 transition duration-200">
+                    <img src="{{ asset('logo.png') }}" alt="Logo VitalDoggy" class="w-20 h-20 object-contain">
+                    <span class="text-2xl font-bold text-dark dark:text-white">VitalDoggy</span>
+                </a>
             </div>
 
             <!-- Desktop Navigation -->
             <div class="hidden lg:flex items-center space-x-6">
                 <!-- Navigation Links -->
                 <nav class="flex items-center space-x-6">
-                    <a href="#servicios" 
+                    <a href="{{ route('services.index') }}" 
                         class="text-dark dark:text-white hover:text-orange-200 dark:hover:text-primary transition duration-200 font-medium">
                         Servicios
                     </a>
-                    <a href="#" 
+                    <a href="{{ route('pets.index') }}" 
                         class="text-dark dark:text-white hover:text-orange-200 dark:hover:text-primary transition duration-200 font-medium">
                         Adopciones
                     </a>
-                    <a href="#" 
+                    <a href="{{ route('shelters.index') }}" 
+                        class="text-dark dark:text-white hover:text-orange-200 dark:hover:text-primary transition duration-200 font-medium">
+                        Refugios
+                    </a>
+                    <a href="#donaciones" 
                         class="text-dark dark:text-white hover:text-orange-200 dark:hover:text-primary transition duration-200 font-medium">
                         Donaciones
-                    </a>
-                    <a href="#" 
-                        class="text-dark dark:text-white hover:text-orange-200 dark:hover:text-primary transition duration-200 font-medium">
-                        Albergues
                     </a>
                 </nav>
 
@@ -41,16 +43,24 @@
                 @if (Route::has('login'))
                     <div class="flex space-x-2">
                         @auth
-                            <a href="{{ url('/dashboard') }}"
-                                class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition duration-200">
-                                Dashboard
-                            </a>
+                            <div class="relative group">
+                                <button class="flex items-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition duration-200 focus:outline-none">
+                                    <span class="mr-2">{{ Auth::user()->name }}</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                                </button>
+                                <div class="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-150 z-50">
+                                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Perfil</a>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Cerrar sesión</button>
+                                    </form>
+                                </div>
+                            </div>
                         @else
                             <a href="{{ route('login') }}"
                                 class="px-4 py-2 rounded-lg bg-dark text-white hover:bg-dark/90 transition duration-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
                                 Iniciar sesión
                             </a>
-
                             @if (Route::has('register'))
                                 <a href="{{ route('register') }}"
                                     class="px-4 py-2 rounded-lg  bg-primary text-white hover:bg-primary/90 transition duration-200">
@@ -110,24 +120,44 @@
 
                 <!-- Navigation Links -->
                 <div class="border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
-                    <a href="#servicios" 
+                    <a href="{{ route('services.index') }}" 
                         class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition duration-200">
                         Servicios
                     </a>
-                    <a href="#" 
+                    <a href="{{ route('pets.index') }}" 
                         class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition duration-200">
                         Adopciones
                     </a>
-                    <a href="#" 
+                    <a href="{{ route('shelters.index') }}" 
+                        class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition duration-200">
+                        Refugios
+                    </a>
+                    <a href="#donaciones" 
                         class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition duration-200">
                         Donaciones
-                    </a>
-                    <a href="#" 
-                        class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition duration-200">
-                        Albergues
                     </a>
                 </div>
             </div>
         </div>
     </nav>
 </header>
+
+@push('scripts')
+<script>
+    function toggleTheme() {
+        if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.theme = 'light';
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.theme = 'dark';
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var themeToggle = document.getElementById('theme-toggle');
+        var themeToggleMobile = document.getElementById('theme-toggle-mobile');
+        if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+        if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+    });
+</script>
+@endpush

@@ -30,7 +30,7 @@
 
 <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-        @include('layouts.navigation')
+    <x-navigation />
 
         <!-- Page Heading -->
         @if (isset($header))
@@ -49,19 +49,21 @@
 
     <!-- Script para toggle de modo oscuro -->
     <script>
-        function setupDarkModeToggle() {
-            const toggleButton = document.getElementById('dark-mode-toggle');
-            if (toggleButton) {
-                toggleButton.addEventListener('click', function() {
-                    if (document.documentElement.classList.contains('dark')) {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.theme = 'light';
-                    } else {
-                        document.documentElement.classList.add('dark');
-                        localStorage.theme = 'dark';
-                    }
-                });
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
             }
+        }
+        
+        function setupDarkModeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+            if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+            if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
         }
 
         // Ejecutar después de que el DOM esté completamente cargado

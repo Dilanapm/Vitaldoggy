@@ -18,11 +18,43 @@ class Shelter extends Model
         'description',
         'email',
         'capacity',
+        'image_path',
     ];
     protected $casts = [
         'status' => 'string', // Enum cast
         'capacity' => 'integer',
     ];
+
+    /**
+     * Get the full image URL for the shelter
+     */
+    public function getImageUrlAttribute()
+    {
+        if ($this->image_path) {
+            return asset('storage/shelters/' . $this->image_path);
+        }
+        return null; // Sin imagen por defecto por ahora
+    }
+
+    /**
+     * Check if shelter has an image
+     */
+    public function hasImage()
+    {
+        return !empty($this->image_path);
+    }
+
+    /**
+     * Get shelter status in Spanish
+     */
+    public function getStatusLabelAttribute()
+    {
+        return match($this->status) {
+            'active' => 'Activo',
+            'inactive' => 'Inactivo',
+            default => 'Desconocido'
+        };
+    }
     public function users()
     {
         return $this->hasMany(User::class); // Esta línea establece una relación uno a muchos con el modelo User

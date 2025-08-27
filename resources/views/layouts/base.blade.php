@@ -20,10 +20,10 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#FF6B6B',
-                        secondary: '#4ECDC4',
-                        accent: '#FFD166',
-                        dark: '#1A535C',
+                        primary: '#7C444F',
+                        secondary: '#9F5255',
+                        accent: '#E16A54',
+                        dark: '#F39E60',
                     }
                 }
             },
@@ -31,10 +31,28 @@
         }
 
         // Detectar modo oscuro del sistema y aplicarlo
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
         }
     </script>
+
+    <style>
+        /* Scroll suave optimizado */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Mejorar la visibilidad del texto en modo oscuro */
+        .dark .dark\:text-improved-white {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .dark .dark\:bg-improved-gray {
+            background-color: rgba(17, 24, 39, 0.95);
+        }
+    </style>
 
     @yield('styles')
 
@@ -54,13 +72,45 @@
             @yield('content')
         </main>
 
-        <!-- Footer -->
-        @yield('footer', '')
+        <!-- Footer Component -->
+        <x-footer />
     </div>
 
     <!-- Scripts Component -->
     <x-scripts />
     
+    <script>
+        // Scroll suave optimizado con JavaScript para mayor control
+        document.addEventListener('DOMContentLoaded', function() {
+            // Interceptar enlaces a secciones de la misma página
+            const smoothScrollLinks = document.querySelectorAll('a[href^="#"]');
+            
+            smoothScrollLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    
+                    // Solo procesar si es un ID válido
+                    if (targetId !== '#' && targetId.length > 1) {
+                        const targetElement = document.querySelector(targetId);
+                        
+                        if (targetElement) {
+                            e.preventDefault();
+                            
+                            // Calcular posición con offset para header fijo si existe
+                            const headerHeight = 80; // Ajusta según tu header
+                            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+                            
+                            window.scrollTo({
+                                top: targetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
     @yield('scripts')
 </body>
 

@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 
 // Rutas públicas
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\ShelterController;
+use App\Http\Controllers\ServiceController;
 
 // Página principal
 Route::get('/', function () {
@@ -17,6 +19,13 @@ Route::get('/', function () {
 
 // Ruta pública para el listado de mascotas
 Route::get('/mascotas', [PetController::class, 'index'])->name('pets.index');
+
+// Rutas públicas para refugios
+Route::get('/refugios', [ShelterController::class, 'index'])->name('shelters.index');
+Route::get('/refugios/{shelter}', [ShelterController::class, 'show'])->name('shelters.show');
+
+// Ruta pública para servicios
+Route::get('/servicios', [ServiceController::class, 'index'])->name('services.index');
 
 // Rutas de verificación de email
 Route::get('/email/verify', function () {
