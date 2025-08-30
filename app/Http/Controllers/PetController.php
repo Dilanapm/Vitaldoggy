@@ -8,12 +8,10 @@ use Illuminate\Http\Request;
 class PetController extends Controller
 {
     /**
-     * Muestra el listado público de mascotas.
+     * Muestra el listado público de mascotas usando Livewire.
      */
     public function index()
     {
-        // Puedes paginar o limitar según necesidad
-        $pets = Pet::with('photos')->latest()->paginate(12);
-        return view('pets.index', compact('pets'));
+        return view('pets.index');
     }
 }

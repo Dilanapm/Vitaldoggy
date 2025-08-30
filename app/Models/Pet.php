@@ -77,56 +77,15 @@ class Pet extends Model
         return $this->belongsTo(Caretaker::class);
     }
 
-    /* ===================== Scopes útiles (opcional) ===================== */
-
-    // Solo disponibles
-    public function scopeAvailable($q)
+    public function adoptionApplications()
     {
-        return $q->where('adoption_status', 'available');
+        return $this->hasMany(AdoptionApplication::class);
     }
 
-    // Filtrar por tamaño si se pasa un valor válido
-    public function scopeSizeIs($q, ?string $size)
-    {
-        return $size ? $q->where('size', $size) : $q;
-    }
-
-    // Edad máxima en meses
-    public function scopeMaxAgeMonths($q, ?int $months)
-    {
-        return $months ? $q->where('age_months', '<=', $months) : $q;
-    }
-
-    // Apto para departamento
-    public function scopeApartmentOk($q, ?bool $flag = true)
-    {
-        return $flag ? $q->where('apartment_ok', true) : $q;
-    }
-
-    /* ===================== Accessors (opcional) ===================== */
-
-    // Edad humana legible (por si quieres mostrarla en la UI)
-    public function getAgeHumanAttribute(): ?string
-    {
-        if (!$this->age_months) return $this->age; // si ya tienes el texto original
-        if ($this->age_months < 12) return $this->age_months.' meses';
-        $years = intdiv($this->age_months, 12);
-        $rest  = $this->age_months % 12;
-        return $years.' año'.($years>1?'s':'').($rest ? " {$rest} mes".($rest>1?'es':'') : ''); // lo que se hace en esta linea es para que si es 1 año no ponga la s y si es mas de 1 año ponga la s
-    }
-
-    // Nivel de energía en texto (útil en cards)
-    public function getEnergyLevelLabelAttribute(): ?string
-    {
-        return match((int) $this->energy_level) {
-            1 => 'Muy baja', 2 => 'Baja', 3 => 'Media', 4 => 'Alta', 5 => 'Muy alta',
-            default => null, // esta linea sirve para manejar casos no esperados
-        };
-    }
     public function photos()
-{
-    return $this->hasMany(PetPhoto::class);
-}
+    {
+        return $this->hasMany(PetPhoto::class);
+    }
     public function primaryPhoto()
     {
         return $this->hasOne(PetPhoto::class)->where('is_primary', true);

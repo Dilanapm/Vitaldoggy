@@ -80,7 +80,7 @@
 
 
         <!-- Navigation Component -->
-        <x-navigation />
+        <livewire:navigation />
 
         <!-- Hero Section -->
         <section class="py-12 lg:py-20 container mx-auto px-6">
@@ -95,7 +95,7 @@
                     </p>
                     <div class="flex flex-wrap gap-4">
                         <a href="{{ route('register') }}"
-                            class="px-6 py-3 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition duration-200">
+                            class="px-6 py-3 rounded-lg bg-dark text-white font-medium hover:bg-primary/90 transition duration-200">
                                 Adoptar una mascota
                         </a>
                         <a href="#testimonios"

@@ -3,27 +3,24 @@
 @section('title', 'Refugios - VitalDoggy')
 @section('description', 'Conoce nuestros refugios aliados que rescatan y cuidan mascotas en busca de un hogar.')
 
-@section('background')
-    <!-- Hero background -->
-    <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#751629] via-[#f56e5c] via-70% to-[#6b1f11] dark:bg-gradient-to-r dark:from-primary/5 dark:to-secondary/5"></div>
-@endsection
-
 @section('content')
     <!-- Hero Section -->
-    <section class="py-2 lg:py-5 container mx-auto px-6">
+    <div class="py-2 lg:py-2 container mx-auto px-6 dark:bg-gray-900/75">
         <div class="text-center mb-12">
-            <h1 class="text-4xl lg:text-5xl font-bold text-dark dark:text-white leading-tight mb-6">
-                Nuestros Refugios Aliados
+            <h1 class="text-4xl lg:text-6xl font-bold leading-tight mb-6">
+                <span class="bg-gradient-to-r from-[#751629] via-[#f56e5c] to-[#6b1f11] bg-clip-text text-transparent dark:from-primary dark:via-accent dark:to-secondary">
+                    Nuestros Refugios Aliados
+                </span>
             </h1>
-            <p class="text-lg text-gray-200 dark:text-gray-300 max-w-3xl mx-auto">
+            <p class="text-lg text-gray-800 dark:text-gray-300 max-w-3xl mx-auto">
                 Conoce los refugios y albergues que trabajan incansablemente para rescatar, cuidar y encontrar hogares para mascotas abandonadas.
                 Cada uno tiene una historia única y una misión compartida: salvar vidas.
             </p>
         </div>
-    </section>
+    </div>
 
     <!-- Shelters Grid -->
-    <section class="py-16 bg-white dark:bg-gray-800">
+    <div class="dark:bg-gray-900/75 py-2">
         <div class="container mx-auto px-6">
             @if($shelters->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -71,7 +68,7 @@
                                 <div class="mt-4">
                                     <a href="{{ route('shelters.show', $shelter) }}" 
                                        class="w-full inline-block text-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition duration-200">
-                                        Ver más detalles
+                                        Ver mascotas
                                     </a>
                                 </div>
                             </div>
@@ -80,18 +77,18 @@
                 </div>
 
                 <!-- Paginación -->
-                <div class="mt-12">
+                <div class="mt-12 dark:bg-gray-900/75">
                     {{ $shelters->links() }}
                 </div>
             @else
-                <div class="text-center py-12">
+                <div class="text-center py-12 dark:bg-gray-900/75">
                     <x-icons.heart class="w-16 h-16 text-gray-400 mx-auto mb-4" />
                     <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-300 mb-2">No hay refugios disponibles</h3>
                     <p class="text-gray-500 dark:text-gray-400">Próximamente tendremos más refugios aliados.</p>
                 </div>
             @endif
         </div>
-    </section>
+    </div>
 
     <!-- Call to Action - Solo para usuarios no autenticados -->
     @guest

@@ -55,29 +55,80 @@
     </style>
 
     @yield('styles')
-
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Livewire Styles -->
+    @livewireStyles
+    
+    <!-- Vite Assets -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="antialiased bg-gray-50 dark:bg-gray-900">
+<body class="antialiased">
     <div class="relative min-h-screen">
-        @yield('background', '')
+        <!-- Fondo gradient principal -->
+        <div class="fixed inset-0 -z-20">
+            <div class="absolute inset-0 bg-gradient-to-br from-[#751629] via-[#f56e5c] via-70% to-[#6b1f11]"></div>
+        </div>
         
         <!-- Navigation Component -->
-        <x-navigation />
+        <livewire:navigation />
 
-        <!-- Main Content -->
-        <main>
-            @yield('content')
+        <!-- Page Heading (opcional) -->
+        @hasSection('header')
+            <header class="relative bg-white/85 dark:bg-gray-900/85 backdrop-blur-md shadow-xl border-b border-white/30 dark:border-gray-700/50">
+                <!-- Gradient overlay sutil para el header -->
+                <div class="absolute inset-0 bg-gradient-to-r from-[#751629]/5 via-[#f56e5c]/5 to-[#6b1f11]/5 dark:from-[#751629]/10 dark:via-[#f56e5c]/10 dark:to-[#6b1f11]/10"></div>
+                
+                <!-- Contenido del header -->
+                <div class="relative max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                    <div class="text-gray-800 dark:text-gray-100">
+                        @yield('header')
+                    </div>
+                </div>
+                
+                <!-- Línea decorativa inferior -->
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#751629] via-[#f56e5c] to-[#6b1f11] opacity-60"></div>
+            </header>
+        @endif
+
+        <!-- Main Content con overlay mejorado para legibilidad -->
+        <main class="relative">
+            <div class="relative bg-white/75 dark:bg-gray-900/75 backdrop-blur-sm">
+                @yield('content')
+            </div>
         </main>
 
-        <!-- Footer Component -->
-        <x-footer />
+        <!-- Footer Component (sin overlay) -->
+        <div class="relative z-20">
+            <x-footer />
+        </div>
     </div>
 
     <!-- Scripts Component -->
     <x-scripts />
+    
+    <!-- Script para toggle de modo oscuro -->
+    <script>
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+        
+        function setupDarkModeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+            if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+            if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+        }
+
+        // Ejecutar después de que el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', setupDarkModeToggle);
+    </script>
     
     <script>
         // Scroll suave optimizado con JavaScript para mayor control
@@ -112,6 +163,9 @@
     </script>
 
     @yield('scripts')
+    
+    <!-- Livewire Scripts -->
+    @livewireScripts
 </body>
 
 </html>

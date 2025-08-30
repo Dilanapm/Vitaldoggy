@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\ShelterController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\AdoptionController;
 
 // Página principal
 Route::get('/', function () {
@@ -26,6 +27,12 @@ Route::get('/refugios/{shelter}', [ShelterController::class, 'show'])->name('she
 
 // Ruta pública para servicios
 Route::get('/servicios', [ServiceController::class, 'index'])->name('services.index');
+
+// Rutas de adopción (requieren autenticación)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/adopcion/{pet}', [App\Http\Controllers\AdoptionController::class, 'create'])->name('adoption.create');
+    Route::get('/mis-solicitudes', [App\Http\Controllers\AdoptionController::class, 'index'])->name('adoption.index');
+});
 
 // Rutas de verificación de email
 Route::get('/email/verify', function () {

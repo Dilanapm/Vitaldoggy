@@ -1,5 +1,9 @@
 <!-- Footer -->
-<footer class="bg-gray-900 dark:bg-black text-white py-12">
+<footer class="relative">
+    <!-- Fondo gradiente que cambia según el modo - igual que navigation -->
+    <div class="absolute inset-0 bg-gradient-to-br from-[#751629]/95 via-[#f56e5c]/95 via-100% to-[#6b1f11]/95 dark:bg-gradient-to-br dark:from-gray-900/95 dark:via-gray-800/95 dark:to-gray-700/95"></div>
+    
+    <div class="relative text-white py-5">
     <div class="container mx-auto px-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div>
@@ -7,14 +11,14 @@
                     <img src="{{ asset('logo.png') }}" alt="Logo VitalDoggy" class="w-20 h-20 object-contain">
                     <span class="text-xl font-bold">VitalDoggy</span>
                 </div>
-                <p class="text-gray-400">
+                <p class="text-gray-200 dark:text-gray-300">
                     Conectando mascotas con hogares amorosos desde 2023.
                 </p>
             </div>
 
             <div>
                 <h4 class="text-lg font-semibold mb-4">Enlaces rápidos</h4>
-                <ul class="space-y-2 text-gray-400">
+                <ul class="space-y-2 text-gray-200 dark:text-gray-300">
                     <li><a href="{{ route('home') }}" class="hover:text-primary transition">Inicio</a></li>
                     <li><a href="{{ route('services.index') }}" class="hover:text-primary transition">Servicios</a></li>
                     <li><a href="{{ route('pets.index') }}" class="hover:text-primary transition">Adopciones</a></li>
@@ -25,7 +29,7 @@
 
             <div>
                 <h4 class="text-lg font-semibold mb-4">Legal</h4>
-                <ul class="space-y-2 text-gray-400">
+                <ul class="space-y-2 text-gray-200 dark:text-gray-300">
                     <li><a href="#" class="hover:text-primary transition">Términos de uso</a></li>
                     <li><a href="#" class="hover:text-primary transition">Política de privacidad</a></li>
                     <li><a href="#" class="hover:text-primary transition">Cookies</a></li>
@@ -34,7 +38,7 @@
 
             <div>
                 <h4 class="text-lg font-semibold mb-4">Contacto</h4>
-                <ul class="space-y-2 text-gray-400">
+                <ul class="space-y-2 text-gray-200 dark:text-gray-300">
                     <li class="flex items-center">
                         <svg class="w-5 h-5 mr-2 text-primary" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" />
@@ -49,20 +53,20 @@
                     </li>
                 </ul>
                 <div class="mt-4 flex space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-primary">
+                    <a href="#" class="text-gray-200 dark:text-gray-300 hover:text-primary">
                         <x-icons.instagram class="w-6 h-6" />
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-primary">
+                    <a href="#" class="text-gray-200 dark:text-gray-300 hover:text-primary">
                         <x-icons.twitter class="w-6 h-6" />
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-primary">
+                    <a href="#" class="text-gray-200 dark:text-gray-300 hover:text-primary">
                         <x-icons.facebook class="w-6 h-6" />
                     </a>
                 </div>
             </div>
         </div>
 
-        <div class="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
+        <div class="mt-12 pt-8 border-t border-white/20 dark:border-gray-600/50 text-center text-gray-200 dark:text-gray-400">
             <p>© {{ date('Y') }} VitalDoggy. Todos los derechos reservados.</p>
         </div>
     </div>
