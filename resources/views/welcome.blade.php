@@ -266,7 +266,7 @@
         <section class="py-16 bg-dark dark:bg-black">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl font-bold text-white mb-6">Cambia una vida hoy</h2>
-                <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
+                <p class="text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
                     Adopta, dona o únete como voluntario. Cada pequeña acción puede hacer una gran diferencia en la vida
                     de una mascota.
                 </p>
@@ -275,7 +275,7 @@
                         class="px-6 py-3 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition duration-200">
                             Adoptar una mascota
                     </a>
-                    <a href="#"
+                    <a href="{{ route('shelters.index') }}"
                         class="px-6 py-3 rounded-lg bg-transparent border border-white text-white font-medium hover:bg-white/10 transition duration-200">
                         Conocer albergues
                     </a>

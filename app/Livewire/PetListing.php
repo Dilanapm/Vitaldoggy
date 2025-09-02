@@ -47,7 +47,7 @@ class PetListing extends Component
     public function refreshPets()
     {
         // Método para refrescar la lista de mascotas
-        $this->render();
+        $this->dispatch('$refresh');
     }
 
     public function mount()
@@ -69,14 +69,19 @@ class PetListing extends Component
 
     public function getPets()
     {
-        $query = Pet::with(['photos', 'adoptionApplications']);
+        $query = Pet::query()
+        // Carga solo la foto primaria (sin traer todas)
+        ->with(['primaryPhoto:id,pet_id,photo_path'])
+        // Si quieres saber si tiene postulaciones, esto te da el conteo:
+        ->withCount('adoptionApplications');
 
-        // Filtrar por búsqueda
+         // Búsqueda
         if (!empty($this->search)) {
-            $query->where(function($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('breed', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%');
+            $s = '%'.$this->search.'%'; // esta linea hace que la búsqueda sea más flexible
+            $query->where(function($q) use ($s) {
+                $q->where('name', 'like', $s)
+                ->orWhere('breed', 'like', $s)
+                ->orWhere('description', 'like', $s);
             });
         }
 
@@ -85,21 +90,13 @@ class PetListing extends Component
             $query->where('adoption_status', $this->filterByStatus);
         }
 
+
         // Ordenar
-        switch ($this->sortBy) {
-            case 'name':
-                $query->orderBy('name', 'asc');
-                break;
-            case 'age':
-                $query->orderBy('age', 'asc');
-                break;
-            case 'oldest':
-                $query->orderBy('created_at', 'asc');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
-                break;
-        }
+        $query->when($this->sortBy === 'name',   fn($q) => $q->orderBy('name', 'asc'))
+            ->when($this->sortBy === 'age',    fn($q) => $q->orderBy('age_months', 'asc')) // mejor que 'age' texto
+            ->when($this->sortBy === 'oldest', fn($q) => $q->orderBy('created_at', 'asc'))
+            ->when(!in_array($this->sortBy, ['name','age','oldest']),
+                    fn($q) => $q->orderBy('created_at', 'desc'));
 
         return $query->paginate(12);
     }

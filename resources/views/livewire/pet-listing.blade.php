@@ -107,7 +107,7 @@
                 <div class="p-4 flex-1 flex flex-col">
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">{{ $pet->name }}</h2>
                     <p class="text-gray-600 dark:text-gray-300 mb-2">{{ $pet->breed ?? 'Raza desconocida' }}</p>
-                    <p class="text-gray-500 dark:text-gray-400 mb-4">Edad: {{ $pet->age ?? 'N/D' }} {{ $pet->age == 1 ? 'año' : 'años' }}</p>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">Edad: {{ $pet->age ?? 'N/D' }}</p>
                     
                     <!-- Estado de solicitud del usuario -->
                     @auth
