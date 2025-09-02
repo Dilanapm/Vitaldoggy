@@ -36,7 +36,9 @@ class Pet extends Model
         'apartment_ok'   => 'boolean',
     ];
 
+    protected $with = ['primaryPhoto'];
 
+    protected $appends = ['display_photo_url', 'thumbnail_url', 'has_primary_photo'];
     /* ===================== Relaciones ===================== */
     public function shelter()
     {
@@ -62,23 +64,75 @@ class Pet extends Model
         return $this->hasOne(PetPhoto::class)->where('is_primary', true);
     }
 
-    public function getPhotoUrlComputedAttribute(): ?string
+
+    public function getDisplayPhotoUrlAttribute(): ?string
     {
-    // 1) ¿tiene primaria?
-    $p = $this->relationLoaded('primaryPhoto')
-        ? $this->primaryPhoto
-        : $this->primaryPhoto()->first();
+        // No disparamos query extra si ya hiciste eager load en el controlador/Livewire:
+        $primary = $this->relationLoaded('primaryPhoto') ? $this->primaryPhoto : null;
 
-    $path = $p?->photo_path ?? $this->photo_url;
+        if ($primary && $primary->photo_path) {
+            return asset('storage/' . ltrim($primary->photo_path, '/'));
+        }
 
-    if (!$path) return null;
+        if (!empty($this->photo_url)) {
+            if (preg_match('#^https?://#i', $this->photo_url)) {
+                return $this->photo_url;
+            }
+            return asset('storage/' . ltrim($this->photo_url, '/'));
+        }
 
-    // Si es URL absoluta (http/https), devuélvela tal cual:
-    if (preg_match('#^https?://#i', $path)) {
-        return $path;
+        return null;
     }
 
-    // Si es ruta local (storage/app/public/...), conviértela:
-    return Storage::url($path);
-}
+    /**
+     * (Opcional) miniatura; por ahora devuelve la misma URL.
+     * Si luego generas thumbs (ej. /pets/{id}/thumbs/...), cambia aquí.
+     */
+    public function getThumbnailUrlAttribute(): ?string
+    {
+        return $this->display_photo_url;
+    }
+
+    /**
+     * (Opcional) helper rápido para saber si tiene primaria sin N+1
+     */
+    public function getHasPrimaryPhotoAttribute(): bool
+    {
+        return $this->relationLoaded('primaryPhoto') && !is_null($this->primaryPhoto);
+    }
+
+    /* ===================== Scopes ===================== */
+    public function scopeAvailable($q)
+    {
+        return $q->where('adoption_status', 'available');
+    }
+
+    public function scopeDogs($q)
+    {
+        return $q->where('species', 'Perro');
+    }
+
+    public function scopeSearch($q, ?string $term)
+    {
+        if (!$term) return $q;
+        $s = '%'.$term.'%';
+        return $q->where(function($qq) use ($s) {
+            $qq->where('name', 'like', $s)
+            ->orWhere('breed', 'like', $s)
+            ->orWhere('description', 'like', $s);
+        });
+    }
+
+    public function scopeSortByKey($q, string $sortBy)
+    {
+        return $q->when($sortBy === 'name',   fn($qq) => $qq->orderBy('name', 'asc'))
+                ->when($sortBy === 'age',    fn($qq) => $qq->orderBy('age_months', 'asc'))
+                ->when($sortBy === 'oldest', fn($qq) => $qq->orderBy('created_at', 'asc'))
+                ->when(!in_array($sortBy, ['name','age','oldest']), fn($qq) => $qq->orderBy('created_at','desc'));
+    }
+
+    public function scopeStatus($q, string $status)
+    {
+        return $status === 'all' ? $q : $q->where('adoption_status', $status);
+    }   
 }

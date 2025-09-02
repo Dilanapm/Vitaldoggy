@@ -69,37 +69,48 @@ class PetListing extends Component
 
     public function getPets()
     {
-        $query = Pet::query()
-        // Carga solo la foto primaria (sin traer todas)
-        ->with(['primaryPhoto:id,pet_id,photo_path'])
-        // Si quieres saber si tiene postulaciones, esto te da el conteo:
-        ->withCount('adoptionApplications');
+        $query = \App\Models\Pet::query()
+            // Foto primaria (rápido) + conteo de postulaciones
+            ->with(['primaryPhoto:id,pet_id,photo_path'])
+            ->withCount('adoptionApplications');
 
-         // Búsqueda
-        if (!empty($this->search)) {
-            $s = '%'.$this->search.'%'; // esta linea hace que la búsqueda sea más flexible
-            $query->where(function($q) use ($s) {
-                $q->where('name', 'like', $s)
-                ->orWhere('breed', 'like', $s)
-                ->orWhere('description', 'like', $s);
-            });
-        }
+        // Búsqueda (limpia y opcional)
+        $query->when(
+            filled(trim($this->search)),
+            function ($q) {
+                $s = '%' . trim($this->search) . '%';
+                $q->where(function ($qq) use ($s) {
+                    $qq->where('name', 'like', $s)
+                    ->orWhere('breed', 'like', $s)
+                    ->orWhere('description', 'like', $s);
+                });
+            }
+        );
 
-        // Filtrar por estado
-        if ($this->filterByStatus !== 'all') {
-            $query->where('adoption_status', $this->filterByStatus);
-        }
+        // Filtro por estado (si no es 'all')
+        $query->when(
+            $this->filterByStatus !== 'all',
+            fn($q) => $q->where('adoption_status', $this->filterByStatus)
+        );
 
-
-        // Ordenar
-        $query->when($this->sortBy === 'name',   fn($q) => $q->orderBy('name', 'asc'))
-            ->when($this->sortBy === 'age',    fn($q) => $q->orderBy('age_months', 'asc')) // mejor que 'age' texto
+        // Orden
+        $query
+            ->when($this->sortBy === 'name', function ($q) {
+                // Case-insensitive; usa COLLATE si tu collation no es CI
+                $q->orderByRaw('LOWER(name) ASC');
+            })
+            ->when($this->sortBy === 'age', function ($q) {
+                // NULLS LAST para age_months
+                $q->orderByRaw('age_months IS NULL, age_months ASC');
+            })
             ->when($this->sortBy === 'oldest', fn($q) => $q->orderBy('created_at', 'asc'))
-            ->when(!in_array($this->sortBy, ['name','age','oldest']),
-                    fn($q) => $q->orderBy('created_at', 'desc'));
+            ->when(! in_array($this->sortBy, ['name','age','oldest'], true),
+                fn($q) => $q->orderBy('created_at','desc'));
 
-        return $query->paginate(12);
+        // Si quieres que conserve los parámetros en los links de paginación:
+        return $query->paginate(20)->withQueryString();
     }
+
 
     public function render()
     {
