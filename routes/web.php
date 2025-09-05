@@ -31,6 +31,7 @@ Route::get('/servicios', [ServiceController::class, 'index'])->name('services.in
 // Rutas de adopción (requieren autenticación)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/adopcion/{pet}', [App\Http\Controllers\AdoptionController::class, 'create'])->name('adoption.create');
+    Route::post('/adopcion/{pet}', [App\Http\Controllers\AdoptionController::class, 'store'])->name('adoption.store');
     Route::get('/mis-solicitudes', [App\Http\Controllers\AdoptionController::class, 'index'])->name('adoption.index');
 });
 
@@ -51,15 +52,32 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 // Rutas para administradores
 Route::prefix('admin')->middleware(['auth','verified' , 'role:admin'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    // Dashboard
+    Route::get('/dashboard', [App\Http\Controllers\Admin\AdminController::class, 'dashboard'])->name('admin.dashboard');
     
-    Route::get('/shelters', function () {
-        return view('admin.shelters.index');
-    })->name('admin.shelters');
+    // Gestión de Usuarios
+    Route::get('/users', [App\Http\Controllers\Admin\AdminController::class, 'users'])->name('admin.users');
+    Route::get('/users/create', [App\Http\Controllers\Admin\AdminController::class, 'createUser'])->name('admin.users.create');
+    Route::post('/users', [App\Http\Controllers\Admin\AdminController::class, 'storeUser'])->name('admin.users.store');
+    Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\AdminController::class, 'editUser'])->name('admin.users.edit');
+    Route::put('/users/{user}', [App\Http\Controllers\Admin\AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::patch('/users/{user}/toggle-status', [App\Http\Controllers\Admin\AdminController::class, 'toggleUserStatus'])->name('admin.users.toggle-status');
     
-    // Rutas para gestión de cuidadores (caretakers) - acceso de administrador
+    // Gestión de Refugios
+    Route::get('/shelters', [App\Http\Controllers\Admin\AdminController::class, 'shelters'])->name('admin.shelters.index');
+    Route::get('/shelters/create', [App\Http\Controllers\Admin\AdminController::class, 'createShelter'])->name('admin.shelters.create');
+    Route::post('/shelters', [App\Http\Controllers\Admin\AdminController::class, 'storeShelter'])->name('admin.shelters.store');
+    Route::get('/shelters/{shelter}/edit', [App\Http\Controllers\Admin\AdminController::class, 'editShelter'])->name('admin.shelters.edit');
+    Route::put('/shelters/{shelter}', [App\Http\Controllers\Admin\AdminController::class, 'updateShelter'])->name('admin.shelters.update');
+    Route::patch('/shelters/{shelter}/toggle-status', [App\Http\Controllers\Admin\AdminController::class, 'toggleShelterStatus'])->name('admin.shelters.toggle-status');
+    Route::delete('/shelters/{shelter}', [App\Http\Controllers\Admin\AdminController::class, 'destroyShelter'])->name('admin.shelters.destroy');
+    Route::get('/shelters/{shelter}', [App\Http\Controllers\Admin\AdminController::class, 'showShelter'])->name('admin.shelters.show');
+    Route::get('/shelters/{shelter}/edit', [App\Http\Controllers\Admin\AdminController::class, 'editShelter'])->name('admin.shelters.edit');
+    Route::put('/shelters/{shelter}', [App\Http\Controllers\Admin\AdminController::class, 'updateShelter'])->name('admin.shelters.update');
+    Route::delete('/shelters/{shelter}', [App\Http\Controllers\Admin\AdminController::class, 'destroyShelter'])->name('admin.shelters.destroy');
+    Route::patch('/shelters/{shelter}/toggle-status', [App\Http\Controllers\Admin\AdminController::class, 'toggleShelterStatus'])->name('admin.shelters.toggle-status');
+    
+    // Gestión de cuidadores (caretakers) - acceso de administrador
     Route::get('/caretakers', [App\Http\Controllers\CaretakerController::class, 'index'])->name('admin.caretakers.index');
     Route::get('/caretakers/create', [App\Http\Controllers\CaretakerController::class, 'create'])->name('admin.caretakers.create');
     Route::post('/caretakers', [App\Http\Controllers\CaretakerController::class, 'store'])->name('admin.caretakers.store');
@@ -72,9 +90,7 @@ Route::prefix('admin')->middleware(['auth','verified' , 'role:admin'])->group(fu
 
 // Rutas para usuarios normales
 Route::prefix('user')->middleware(['auth', 'verified' , 'role:user'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('user.dashboard');
-    })->name('user.dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\UserDashboardController::class, 'index'])->name('user.dashboard');
 });
 
 // Rutas para donantes

@@ -98,6 +98,12 @@ class Navigation extends Component
         return false;
     }
 
+    // Helper function para verificar si el usuario es admin
+    public function isAdmin()
+    {
+        return Auth::check() && Auth::user()->hasRole('admin');
+    }
+
     public function render()
     {
         return view('livewire.navigation');

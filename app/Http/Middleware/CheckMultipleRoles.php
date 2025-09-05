@@ -20,8 +20,11 @@ class CheckMultipleRoles
             return redirect()->route('login');
         }
 
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
         // Verificar si el usuario tiene alguno de los roles permitidos
-        if (!in_array(auth()->user()->role, $roles)) {
+        if (!$user->hasAnyRole($roles)) {
             abort(403, 'No tienes permisos para acceder a esta sección.');
         }
 

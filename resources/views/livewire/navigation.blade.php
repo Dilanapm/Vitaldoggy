@@ -67,17 +67,30 @@
                                     
                                     @if($showProfileDropdown)
                                         <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
-                                            <a href="{{ route('user.dashboard') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                                Panel
-                                            </a>
+                                            @if($this->isAdmin())
+                                                <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                    <i class="fas fa-cog mr-2"></i>Panel de Administración
+                                                </a>
+                                                <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+                                            @endif
+                                            
+                                            
                                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                                Perfil
+                                                <i class="fas fa-user mr-2"></i>Perfil
                                             </a>
-                                            <a href="{{ route('adoption.index') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                                Mis Solicitudes
+                                            
+                                            @if(!$this->isAdmin())
+                                                <a href="{{ route('adoption.index') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                    <i class="fas fa-heart mr-2"></i>Mis Solicitudes
+                                                </a>
+                                                <a href="{{ route('user.dashboard') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                <i class="fas fa-tachometer-alt mr-2"></i>Panel
                                             </a>
+                                            @endif
+                                            
+                                            <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
                                             <button wire:click="logout" class="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                                Cerrar sesión
+                                                <i class="fas fa-sign-out-alt mr-2"></i>Cerrar sesión
                                             </button>
                                         </div>
                                     @endif
@@ -126,10 +139,21 @@
                         @if (Route::has('login'))
                             @auth
                                 <div class="p-4 space-y-3">
-                                    <a href="{{ url('/dashboard') }}"
-                                        class="block w-full text-center px-4 py-3 rounded-lg bg-primary text-white hover:bg-primary/90 transition duration-200 font-medium">
-                                        Dashboard
-                                    </a>
+                                    @if($this->isAdmin())
+                                        <a href="{{ route('admin.dashboard') }}"
+                                            class="block w-full text-center px-4 py-3 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition duration-200 font-medium">
+                                            <i class="fas fa-cog mr-2"></i>Panel de Administración
+                                        </a>
+                                        <a href="{{ route('user.dashboard') }}"
+                                            class="block w-full text-center px-4 py-3 rounded-lg bg-primary text-white hover:bg-primary/90 transition duration-200 font-medium">
+                                            <i class="fas fa-tachometer-alt mr-2"></i>Panel Personal
+                                        </a>
+                                    @else
+                                        <a href="{{ route('user.dashboard') }}"
+                                            class="block w-full text-center px-4 py-3 rounded-lg bg-primary text-white hover:bg-primary/90 transition duration-200 font-medium">
+                                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                                        </a>
+                                    @endif
                                 </div>
                             @else
                                 <div class="p-4 space-y-3">

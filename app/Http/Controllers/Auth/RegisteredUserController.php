@@ -46,6 +46,7 @@ class RegisteredUserController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'role' => 'user', // Asignar rol por defecto
+            'roles' => json_encode(['user']), // Asignar roles como JSON string
         ]);
 
         event(new Registered($user));

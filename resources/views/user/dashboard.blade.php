@@ -103,21 +103,170 @@
             <!-- Estadísticas rápidas -->
             <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl shadow-xl p-8 mb-8">
                 <h2 class="text-2xl font-bold mb-6 bg-gradient-to-r from-[#751629] to-[#f56e5c] bg-clip-text text-transparent dark:from-primary dark:to-accent">
-                    Estadísticas Rápidas
+                    Tu Progreso en VitalDoggy
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="text-center p-6 bg-gradient-to-br from-[#751629]/10 to-[#f56e5c]/10 rounded-2xl border border-[#751629]/20">
-                        <div class="text-3xl font-bold text-[#751629] dark:text-primary mb-2">12</div>
-                        <div class="text-gray-600 dark:text-gray-300">Mascotas Disponibles</div>
+                        <div class="text-3xl font-bold text-[#751629] dark:text-primary mb-2">{{ $userStats['total_applications'] }}</div>
+                        <div class="text-gray-600 dark:text-gray-300">Solicitudes Enviadas</div>
                     </div>
                     <div class="text-center p-6 bg-gradient-to-br from-[#f56e5c]/10 to-[#6b1f11]/10 rounded-2xl border border-[#f56e5c]/20">
-                        <div class="text-3xl font-bold text-[#f56e5c] dark:text-accent mb-2">3</div>
+                        <div class="text-3xl font-bold text-[#f56e5c] dark:text-accent mb-2">{{ $userStats['successful_adoptions'] }}</div>
                         <div class="text-gray-600 dark:text-gray-300">Adopciones Exitosas</div>
                     </div>
                     <div class="text-center p-6 bg-gradient-to-br from-[#6b1f11]/10 to-[#751629]/10 rounded-2xl border border-[#6b1f11]/20">
-                        <div class="text-3xl font-bold text-[#6b1f11] dark:text-secondary mb-2">5</div>
-                        <div class="text-gray-600 dark:text-gray-300">Refugios Asociados</div>
+                        <div class="text-3xl font-bold text-[#6b1f11] dark:text-secondary mb-2">{{ $userStats['pending_applications'] }}</div>
+                        <div class="text-gray-600 dark:text-gray-300">Solicitudes Pendientes</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Sistema de Logros/Roles -->
+            <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl shadow-xl p-8">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold bg-gradient-to-r from-[#751629] to-[#f56e5c] bg-clip-text text-transparent dark:from-primary dark:to-accent">
+                            Desbloquea Nuevos Roles
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 mt-2">
+                            Completa actividades para desbloquear roles especiales y obtener nuevos privilegios
+                        </p>
+                    </div>
+                    <div class="hidden md:block text-4xl">🏆</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    @foreach($roleAchievements as $roleKey => $achievement)
+                        <div class="relative overflow-hidden rounded-2xl border transition-all duration-300 hover:scale-105 
+                            {{ $achievement['unlocked'] 
+                                ? 'border-green-200 dark:border-green-600 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20' 
+                                : 'border-gray-200 dark:border-gray-600 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-700/50' }}">
+                            
+                            <!-- Badge de estado -->
+                            <div class="absolute top-4 right-4 z-10">
+                                @if($achievement['unlocked'])
+                                    <div class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9l-5-4.87L19 2l-7 7-7-7L7 4.13 2 9l6.91-.74L12 2z"/>
+                                        </svg>
+                                        DESBLOQUEADO
+                                    </div>
+                                @else
+                                    <div class="bg-gray-400 dark:bg-gray-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                        BLOQUEADO
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="p-6">
+                                <!-- Icono y título -->
+                                <div class="flex items-center mb-4">
+                                    <div class="text-4xl mr-4 {{ $achievement['unlocked'] ? '' : 'grayscale opacity-50' }}">
+                                        {{ $achievement['icon'] }}
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold {{ $achievement['unlocked'] ? 'text-gray-800 dark:text-white' : 'text-gray-500 dark:text-gray-400' }}">
+                                            {{ $achievement['title'] }}
+                                        </h3>
+                                        <p class="text-sm {{ $achievement['unlocked'] ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500' }}">
+                                            {{ $achievement['description'] }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Barra de progreso mejorada -->
+                                <div class="mb-4">
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="{{ $achievement['unlocked'] ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500' }}">
+                                            Progreso
+                                        </span>
+                                        <span class="font-bold {{ $achievement['progress'] >= 100 ? 'text-green-600' : ($achievement['progress'] >= 50 ? 'text-yellow-600' : 'text-gray-400 dark:text-gray-500') }}">
+                                            {{ $achievement['progress'] }}%
+                                            @if($achievement['progress'] >= 100)
+                                                ✓
+                                            @elseif($achievement['progress'] >= 50)
+                                                ⚡
+                                            @endif
+                                        </span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="h-2 rounded-full transition-all duration-500 
+                                            @if($achievement['progress'] >= 100)
+                                                bg-gradient-to-r from-green-400 to-emerald-500
+                                            @elseif($achievement['progress'] >= 50)
+                                                bg-gradient-to-r from-yellow-400 to-orange-500
+                                            @else
+                                                bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-500
+                                            @endif" 
+                                             style="width: {{ $achievement['progress'] }}%">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Requisito -->
+                                <!-- Requisito y progreso detallado -->
+                                <div class="text-xs {{ $achievement['unlocked'] ? 'text-green-600 font-medium' : 'text-gray-500 dark:text-gray-400' }}">
+                                    <div class="flex items-center mb-2">
+                                        @if($achievement['unlocked'])
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                            ¡Completado!
+                                        @else
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                                            </svg>
+                                            {{ $achievement['requirement'] }}
+                                        @endif
+                                    </div>
+                                    
+                                    <!-- Mostrar pasos para adoptante -->
+                                    @if($roleKey === 'adoptante' && !$achievement['unlocked'])
+                                        <div class="mt-2 space-y-1">
+                                            <div class="text-xs text-gray-400 dark:text-gray-500 font-medium mb-1">Pasos:</div>
+                                            @if(isset($achievement['steps']))
+                                                @foreach($achievement['steps'] as $step)
+                                                    <div class="flex items-center text-xs">
+                                                        @if($achievement['progress'] >= 50 && str_contains($step, '50%'))
+                                                            <svg class="w-3 h-3 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                                            </svg>
+                                                        @elseif($achievement['progress'] >= 100 && str_contains($step, '100%'))
+                                                            <svg class="w-3 h-3 mr-1 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                                            </svg>
+                                                        @else
+                                                            <div class="w-3 h-3 mr-1 border border-gray-300 dark:border-gray-600 rounded-full"></div>
+                                                        @endif
+                                                        <span class="{{ ($achievement['progress'] >= 50 && str_contains($step, '50%')) || ($achievement['progress'] >= 100 && str_contains($step, '100%')) ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500' }}">
+                                                            {{ $step }}
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>                                <!-- Efectos visuales para desbloqueado -->
+                                @if($achievement['unlocked'])
+                                    <div class="absolute inset-0 bg-gradient-to-br {{ $achievement['color'] }} opacity-5 pointer-events-none"></div>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Call to action -->
+                <div class="mt-8 text-center">
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">
+                        ¡Sigue participando en VitalDoggy para desbloquear más roles y ayudar a más mascotas!
+                    </p>
+                    <a href="{{ route('pets.index') }}" 
+                       class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#751629] to-[#f56e5c] text-white font-medium rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        Explorar Mascotas
+                    </a>
                 </div>
             </div>
         </div>

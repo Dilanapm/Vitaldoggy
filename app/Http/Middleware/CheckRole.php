@@ -20,8 +20,11 @@ class CheckRole
             return redirect()->route('login');
         }
 
-        // Verificar si el usuario tiene el rol requerido
-        if (auth()->user()->role !== $role) {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        
+        // Verificar si el usuario tiene el rol requerido (compatible con JSON roles)
+        if (!$user->hasRole($role)) {
             abort(403, 'No tienes permisos para acceder a esta sección.');
         }
 
