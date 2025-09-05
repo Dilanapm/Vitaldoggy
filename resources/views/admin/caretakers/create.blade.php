@@ -26,6 +26,16 @@
                                 <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
                                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
                             </div>
+
+                            <!-- Username -->
+                            <div>
+                                <x-input-label for="username" :value="__('Nombre de Usuario')" />
+                                <x-text-input id="username" class="block mt-1 w-full" type="text" name="username" :value="old('username')" required />
+                                <x-input-error :messages="$errors->get('username')" class="mt-2" />
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                    Este será el nombre de usuario para iniciar sesión
+                                </p>
+                            </div>
                             
                             <!-- Teléfono -->
                             <div>

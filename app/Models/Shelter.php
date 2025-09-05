@@ -31,7 +31,7 @@ class Shelter extends Model
     public function getImageUrlAttribute()
     {
         if ($this->image_path) {
-            return asset('storage/shelters/' . $this->image_path);
+            return asset('storage/' . $this->image_path);
         }
         return null; // Sin imagen por defecto por ahora
     }

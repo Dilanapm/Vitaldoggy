@@ -64,6 +64,7 @@ class CaretakerController extends Controller
         // Validar datos
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:users', 'regex:/^[a-zA-Z0-9_]+$/'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone' => ['required', 'string', 'max:20'],
@@ -81,6 +82,7 @@ class CaretakerController extends Controller
         // Crear el nuevo cuidador
         $caretaker = User::create([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'caretaker',
@@ -177,6 +179,13 @@ class CaretakerController extends Controller
             $rules['email'] = ['required', 'string', 'email', 'max:255'];
         }
         
+        // Si el username ha cambiado, validar que sea único
+        if ($request->username !== $caretaker->username) {
+            $rules['username'] = ['required', 'string', 'max:255', 'unique:users', 'regex:/^[a-zA-Z0-9_]+$/'];
+        } else {
+            $rules['username'] = ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_]+$/'];
+        }
+        
         // Si se proporciona una contraseña, validarla
         if ($request->filled('password')) {
             $rules['password'] = ['confirmed', Rules\Password::defaults()];
@@ -191,6 +200,7 @@ class CaretakerController extends Controller
         
         // Actualizar el cuidador
         $caretaker->name = $request->name;
+        $caretaker->username = $request->username;
         $caretaker->email = $request->email;
         $caretaker->phone = $request->phone;
         $caretaker->address = $request->address;

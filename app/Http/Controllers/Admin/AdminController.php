@@ -8,8 +8,11 @@ use App\Models\Shelter;
 use App\Models\Caretaker;
 use App\Models\Pet;
 use App\Models\AdoptionApplication;
+use App\Http\Requests\StoreShelterRequest;
+use App\Http\Requests\UpdateShelterRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -165,21 +168,9 @@ class AdminController extends Controller
     /**
      * Guardar nuevo refugio
      */
-    public function storeShelter(Request $request)
+    public function storeShelter(StoreShelterRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:shelters',
-            'email' => 'required|email|unique:shelters',
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:500',
-            'city' => 'required|string|max:100',
-            'capacity' => 'required|integer|min:1',
-            'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'status' => 'required|in:active,inactive',
-        ]);
-
-        $data = $request->all();
+        $data = $request->validated();
 
         // Manejar subida de imagen
         if ($request->hasFile('image')) {
@@ -189,7 +180,7 @@ class AdminController extends Controller
 
         Shelter::create($data);
 
-        return redirect()->route('admin.shelters')->with('success', 'Refugio creado exitosamente.');
+        return redirect()->route('admin.shelters.index')->with('success', 'Refugio creado exitosamente.');
     }
 
     /**
@@ -289,36 +280,19 @@ class AdminController extends Controller
     /**
      * Update the specified shelter
      */
-    public function updateShelter(Request $request, Shelter $shelter)
+    public function updateShelter(UpdateShelterRequest $request, Shelter $shelter)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'capacity' => 'nullable|integer|min:1',
-            'status' => 'required|in:active,inactive',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
-        $data = $request->only(['name', 'email', 'phone', 'address', 'city', 'capacity', 'status', 'description']);
+        $data = $request->validated();
 
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($shelter->image_path) {
-                $oldImagePath = storage_path('app/public/shelters/' . $shelter->image_path);
-                if (file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
-                }
+                Storage::disk('public')->delete($shelter->image_path);
             }
 
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->storeAs('public/shelters', $imageName);
-            $data['image_path'] = $imageName;
+            $imagePath = $request->file('image')->store('shelters', 'public');
+            $data['image_path'] = $imagePath;
         }
 
         $shelter->update($data);
