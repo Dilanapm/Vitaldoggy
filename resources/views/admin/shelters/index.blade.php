@@ -15,7 +15,12 @@
         <!-- Overlay para mejor legibilidad -->
         <div class="absolute inset-0 -z-5 bg-white/80 dark:bg-gray-900/85"></div>
         
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Breadcrumb Navigation -->
+            <x-admin-breadcrumb 
+                :items="[]"
+                currentPage="Administrar Refugios" />
+
             <!-- Header del Dashboard -->
             <div class="text-center mb-12">
                 <h1 class="text-4xl md:text-5xl font-bold mb-4">
@@ -180,15 +185,15 @@
                                            title="Editar">
                                             <i class="fas fa-edit text-lg"></i>
                                         </a>
-                                        <form action="{{ route('admin.shelters.destroy', $shelter) }}" method="POST" 
-                                              class="inline-block"
-                                              onsubmit="return confirm('¿Estás seguro de eliminar este refugio? Esta acción no se puede deshacer.')">
+                                        <!-- Solo cambiar estado, no eliminar refugios -->
+                                        <form action="{{ route('admin.shelters.toggle-status', $shelter) }}" method="POST" class="inline-block">
                                             @csrf
-                                            @method('DELETE')
+                                            @method('PATCH')
                                             <button type="submit" 
-                                                    class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30" 
-                                                    title="Eliminar">
-                                                <i class="fas fa-trash text-lg"></i>
+                                                    onclick="return confirm('¿Estás seguro de {{ $shelter->status === 'active' ? 'desactivar' : 'activar' }} este refugio?')"
+                                                    class="transition-colors duration-200 p-2 rounded-lg {{ $shelter->status === 'active' ? 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30' : 'text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/30' }}" 
+                                                    title="{{ $shelter->status === 'active' ? 'Desactivar refugio' : 'Activar refugio' }}">
+                                                <i class="fas {{ $shelter->status === 'active' ? 'fa-ban' : 'fa-check-circle' }} text-lg"></i>
                                             </button>
                                         </form>
                                     </div>

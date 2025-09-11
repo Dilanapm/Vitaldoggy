@@ -117,13 +117,21 @@
                     <!-- Status -->
                     <div>
                         <label for="status" class="block text-sm font-medium text-white mb-2">
-                            Estado <span class="text-red-400">*</span>
+                            Estado del Refugio <span class="text-red-400">*</span>
                         </label>
                         <select name="status" id="status" required
                                 class="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-200">
-                            <option value="active" {{ old('status', $shelter->status) === 'active' ? 'selected' : '' }}>Activo</option>
-                            <option value="inactive" {{ old('status', $shelter->status) === 'inactive' ? 'selected' : '' }}>Inactivo</option>
+                            <option value="active" {{ old('status', $shelter->status) === 'active' ? 'selected' : '' }}>
+                                <i class="fas fa-check-circle mr-2"></i>Activo - Funcionando normalmente
+                            </option>
+                            <option value="inactive" {{ old('status', $shelter->status) === 'inactive' ? 'selected' : '' }}>
+                                <i class="fas fa-pause-circle mr-2"></i>Inactivo - Temporalmente fuera de servicio
+                            </option>
                         </select>
+                        <p class="mt-1 text-xs text-white/60">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Los refugios no se eliminan, solo se pueden desactivar temporalmente
+                        </p>
                         @error('status')
                             <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                         @enderror

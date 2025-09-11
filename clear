@@ -1,0 +1,27 @@
+
+   INFO  Caching framework bootstrap, configuration, and metadata.  
+
+  config ......................................................... 8.81ms DONE
+  events ......................................................... 1.02ms DONE
+  routes ........................................................ 15.28ms FAIL
+
+   LogicException 
+
+  Unable to prepare route [verify-email] for serialization. Another route has already been assigned name [verification.notice].
+
+  at vendor/laravel/framework/src/Illuminate/Routing/AbstractRouteCollection.php:248
+    244▕             $route->name($this->generateRouteName());
+    245▕ 
+    246▕             $this->add($route);
+    247▕         } elseif (! is_null($symfonyRoutes->get($name))) {
+  ➜ 248▕             throw new LogicException("Unable to prepare route [{$route->uri}] for serialization. Another route has already been assigned name [{$name}].");
+    249▕         }
+    250▕ 
+    251▕         $symfonyRoutes->add($route->getName(), $route->toSymfonyRoute());
+    252▕
+
+      [2m+33 vendor frames [22m
+
+  34  artisan:24
+      Illuminate\Foundation\Console\Kernel::handle()
+

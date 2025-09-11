@@ -132,7 +132,7 @@
                                     <svg class="w-5 h-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" />
                                     </svg>
-                                    Donaciones en Especie
+                                    Donaciones en Material
                                 </h4>
                                 <p class="text-gray-700 dark:text-gray-300 mb-3">
                                     Ropa, alimentos, medicinas y juguetes van 100% al refugio. Todo es aprovechado al máximo.

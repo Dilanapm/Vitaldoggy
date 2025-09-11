@@ -1,18 +1,12 @@
 <x-app-layout :pageTitle="'Crear Usuario'" :metaDescription="'Crear un nuevo usuario en VitalDoggy.'">
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="font-semibold text-2xl bg-gradient-to-r from-[#751629] via-[#f56e5c] to-[#6b1f11] bg-clip-text text-transparent">
-                    Crear Nuevo Usuario
-                </h2>
-                <p class="text-gray-600 dark:text-gray-300 mt-2">
-                    Agrega un nuevo usuario al sistema con rol específico.
-                </p>
-            </div>
-            <a href="{{ route('admin.users') }}" 
-               class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl transition-all duration-300 font-medium">
-                ← Volver a Usuarios
-            </a>
+        <div>
+            <h2 class="font-semibold text-2xl bg-gradient-to-r from-[#751629] via-[#f56e5c] to-[#6b1f11] bg-clip-text text-transparent">
+                Crear Nuevo Usuario
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300 mt-2">
+                Agrega un nuevo usuario al sistema con rol específico.
+            </p>
         </div>
     </x-slot>
 
@@ -22,6 +16,13 @@
         <div class="absolute inset-0 -z-5 bg-white/80 dark:bg-gray-900/85"></div>
         
         <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <!-- Breadcrumb Navigation -->
+            <x-admin-breadcrumb 
+                :items="[
+                    ['label' => 'Gestión de Usuarios', 'url' => route('admin.users.index')]
+                ]"
+                currentPage="Crear Usuario" />
+
             <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden">
                 <div class="p-8 bg-gradient-to-r from-[#751629]/10 to-[#f56e5c]/10 dark:from-[#751629]/20 dark:to-[#f56e5c]/20 border-b border-gray-200/30 dark:border-gray-700/30">
                     <h3 class="text-2xl font-bold text-gray-800 dark:text-white">Información del Usuario</h3>
@@ -220,9 +221,7 @@
                         </a>
                         <button type="submit" 
                                 class="px-6 py-3 bg-gradient-to-r from-[#751629] to-[#f56e5c] text-white rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-medium">
-                            <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                            </svg>
+                            <i class="fas fa-user-plus text-lg mr-2"></i>
                             Crear Usuario
                         </button>
                     </div>

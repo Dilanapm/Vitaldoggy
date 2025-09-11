@@ -56,7 +56,7 @@ Route::prefix('admin')->middleware(['auth','verified' , 'role:admin'])->group(fu
     Route::get('/dashboard', [App\Http\Controllers\Admin\AdminController::class, 'dashboard'])->name('admin.dashboard');
     
     // Gestión de Usuarios
-    Route::get('/users', [App\Http\Controllers\Admin\AdminController::class, 'users'])->name('admin.users');
+    Route::get('/users', [App\Http\Controllers\Admin\AdminController::class, 'users'])->name('admin.users.index');
     Route::get('/users/create', [App\Http\Controllers\Admin\AdminController::class, 'createUser'])->name('admin.users.create');
     Route::post('/users', [App\Http\Controllers\Admin\AdminController::class, 'storeUser'])->name('admin.users.store');
     Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\AdminController::class, 'editUser'])->name('admin.users.edit');
@@ -130,6 +130,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/profile/photo', [ProfileController::class, 'deleteProfilePhoto'])->name('profile.photo.delete');
 });
 
 // Ruta para redirección después de login

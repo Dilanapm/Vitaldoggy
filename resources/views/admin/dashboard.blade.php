@@ -16,6 +16,18 @@
         <div class="absolute inset-0 -z-5 bg-white/80 dark:bg-gray-900/85"></div>
         
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            {{-- <!-- Breadcrumb Navigation - Solo mostramos en el dashboard que estamos en inicio -->
+            <div class="mb-6">
+                <nav class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                    <div class="flex items-center px-3 py-2 text-[#751629] dark:text-[#f56e5c] font-medium">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                        </svg>
+                        Dashboard Administrativo
+                    </div>
+                </nav>
+            </div> --}}
+
             <!-- Header del Dashboard -->
             <div class="text-center mb-12">
                 <h1 class="text-4xl md:text-5xl font-bold mb-4">
@@ -98,7 +110,7 @@
             <!-- Acciones Principales -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                 <!-- Gestión de Usuarios -->
-                <a href="{{ route('admin.users') }}" 
+                <a href="{{ route('admin.users.index') }}" 
                    class="group relative overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105">
                     <div class="absolute inset-0 bg-gradient-to-br from-[#751629]/90 to-[#f56e5c]/80"></div>
                     <div class="relative p-8 text-white">

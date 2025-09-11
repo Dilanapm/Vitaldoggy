@@ -58,7 +58,7 @@
 
                                 <!-- Profile Dropdown -->
                                 <div class="relative">
-                                    <button wire:click="toggleProfileDropdown" class="flex items-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition duration-200 focus:outline-none">
+                                    <button id="profile-dropdown-button" wire:click="toggleProfileDropdown" class="flex items-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition duration-200 focus:outline-none">
                                         <span class="mr-2">{{ Auth::user()->name }}</span>
                                         <svg class="w-4 h-4 transform transition-transform duration-200 {{ $showProfileDropdown ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -66,7 +66,7 @@
                                     </button>
                                     
                                     @if($showProfileDropdown)
-                                        <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                                        <div id="profile-dropdown-menu" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                                             @if($this->isAdmin())
                                                 <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                                                     <i class="fas fa-cog mr-2"></i>Panel de Administración
@@ -212,8 +212,11 @@
 
         // Cerrar dropdown al hacer click fuera
         document.addEventListener('click', function(e) {
-            if (!e.target.closest('[wire\:click="toggleProfileDropdown"]') && 
-                !e.target.closest('.absolute.right-0.mt-2')) {
+            // Buscar por ID o clase específica en lugar de atributos wire
+            const profileButton = e.target.closest('#profile-dropdown-button');
+            const profileDropdown = e.target.closest('#profile-dropdown-menu');
+            
+            if (!profileButton && !profileDropdown) {
                 $wire.call('closeDropdowns');
             }
         });

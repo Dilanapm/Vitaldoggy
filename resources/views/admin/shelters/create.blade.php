@@ -1,8 +1,15 @@
-@extends('layouts.base')
+<x-app-layout :pageTitle="'Crear Refugio'" :metaDescription="'Crear un nuevo refugio en VitalDoggy.'">
+    <x-slot name="header">
+        <div>
+            <h2 class="font-semibold text-2xl bg-gradient-to-r from-[#751629] via-[#f56e5c] to-[#6b1f11] bg-clip-text text-transparent">
+                Crear Nuevo Refugio
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300 mt-2">
+                Registra un nuevo refugio en la plataforma.
+            </p>
+        </div>
+    </x-slot>
 
-@section('title', 'Crear Refugio')
-
-@section('content')
 <div class="relative min-h-screen transition-colors duration-300">
     <!-- Hero background -->
     <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#751629] via-[#f56e5c] via-70% to-[#6b1f11] dark:bg-gradient-to-r dark:from-primary/5 dark:to-secondary/5"></div>
@@ -11,23 +18,12 @@
     <div class="absolute inset-0 -z-5 bg-white/80 dark:bg-gray-900/85"></div>
     
     <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center space-x-4">
-                <a href="{{ route('admin.shelters.index') }}" 
-                   class="p-2 rounded-full bg-white/20 dark:bg-gray-700/50 backdrop-blur-sm hover:bg-white/30 dark:hover:bg-gray-600/50 transition-all duration-200">
-                    <i class="fas fa-arrow-left text-xl text-gray-700 dark:text-gray-300"></i>
-                </a>
-                <div>
-                    <h1 class="text-4xl font-bold mb-2">
-                        <span class="bg-gradient-to-r from-[#751629] via-[#f56e5c] to-[#6b1f11] bg-clip-text text-transparent dark:from-primary dark:via-accent dark:to-secondary">
-                            Crear Nuevo Refugio
-                        </span>
-                    </h1>
-                    <p class="text-lg text-gray-700 dark:text-gray-300">Registra un nuevo refugio en la plataforma</p>
-                </div>
-            </div>
-        </div>
+        <!-- Breadcrumb Navigation -->
+        <x-admin-breadcrumb 
+            :items="[
+                ['label' => 'Administrar Refugios', 'url' => route('admin.shelters.index')]
+            ]"
+            currentPage="Crear Refugio" />
 
         <!-- Form -->
         <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden">
@@ -351,6 +347,8 @@ document.addEventListener('DOMContentLoaded', function() {
 #upload-area.border-[#f56e5c] {
     border-color: #f56e5c !important;
     background-color: rgba(245, 110, 92, 0.05) !important;
-}
-</style>
-@endsection
+        }
+    </script>
+    </div>
+</div>
+</x-app-layout>

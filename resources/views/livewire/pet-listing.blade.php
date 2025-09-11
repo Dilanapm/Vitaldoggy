@@ -43,13 +43,8 @@
         </div>
         <button wire:click="refreshPets" 
                     class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#751629] to-[#f56e5c] text-white rounded-lg hover:from-[#751629]/90 hover:to-[#f56e5c]/90 transition duration-200 shadow-lg">
-                <svg wire:loading.remove wire:target="refreshPets" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <svg wire:loading wire:target="refreshPets" class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+                <i wire:loading.remove wire:target="refreshPets" class="fas fa-sync mr-2"></i>
+                <i wire:loading wire:target="refreshPets" class="fas fa-sync fa-spin mr-2"></i>
                 Actualizar
             </button>
     </div>
@@ -57,10 +52,7 @@
     <!-- Indicador de carga -->
     <div wire:loading class="text-center py-4">
         <div class="inline-flex items-center px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg shadow-lg">
-            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-[#f56e5c]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
+            <i class="fas fa-spinner fa-spin mr-3 text-[#f56e5c]"></i>
             <span class="text-gray-700 dark:text-gray-300">Actualizando...</span>
         </div>
         
@@ -98,9 +90,7 @@
                          class="w-full h-48 object-cover">
                 @else
                     <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400">
-                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                        <i class="fas fa-image text-4xl"></i>
                     </div>
                 @endif
 
@@ -117,9 +107,7 @@
                         @if($userApplication)
                             <div class="mb-3 p-2 bg-blue-50/90 dark:bg-blue-900/20 backdrop-blur-sm border border-blue-200/50 dark:border-blue-800/50 rounded text-sm">
                                 <div class="flex items-center text-blue-700 dark:text-blue-300">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                                    </svg>
+                                    <i class="fas fa-info-circle mr-2"></i>
                                     Tu solicitud: 
                                     @if($userApplication->status === 'pending')
                                         <span class="font-medium">Pendiente</span>
@@ -135,43 +123,158 @@
                     
                     <div class="mt-auto">
                         @auth
-                            @if($pet->adoption_status === 'available')
-                                @php
-                                    $userApplication = $this->getUserApplicationStatus($pet->id);
-                                @endphp
-                                @if($userApplication)
-                                    <button disabled
-                                            class="block w-full text-center px-4 py-2 rounded bg-gray-500/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
-                                        Solicitud enviada
-                                    </button>
+                            @can('manageAdoption', $pet)
+                                <!-- Panel de administración para admin y cuidadores autorizados -->
+                                <div class="space-y-2">
+                                    <!-- Botones de gestión -->
+                                    <div class="flex space-x-1">
+                                        <!-- Ver detalles -->
+                                        <button wire:click="showPetDetails({{ $pet->id }})" 
+                                                class="flex-1 text-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-800/50 transition duration-200"
+                                                title="Ver detalles">
+                                            <i class="fas fa-eye mr-1"></i>Ver
+                                        </button>
+                                        
+                                        @can('update', $pet)
+                                            <!-- Editar mascota -->
+                                            <button wire:click="editPet({{ $pet->id }})" 
+                                                    class="flex-1 text-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:hover:bg-yellow-800/50 transition duration-200"
+                                                    title="Editar mascota">
+                                                <i class="fas fa-edit mr-1"></i>Editar
+                                            </button>
+                                        @endcan
+                                        
+                                        @if($pet->adoption_status !== 'adopted')
+                                            <!-- Marcar como adoptado -->
+                                            <button wire:click="markAsAdopted({{ $pet->id }})" 
+                                                    wire:confirm="¿Estás seguro de marcar a {{ $pet->name }} como adoptado?"
+                                                    class="flex-1 text-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/50 dark:text-green-300 dark:hover:bg-green-800/50 transition duration-200"
+                                                    title="Marcar como adoptado">
+                                                <i class="fas fa-check-circle mr-1"></i>Adoptado
+                                            </button>
+                                        @endif
+                                    </div>
+                                    
+                                    <!-- Estado y acciones adicionales -->
+                                    <div class="flex space-x-1">
+                                        @can('toggleStatus', $pet)
+                                            @if($pet->adoption_status !== 'inactive')
+                                                <!-- Desactivar mascota -->
+                                                <button wire:click="togglePetStatus({{ $pet->id }})" 
+                                                        wire:confirm="¿Estás seguro de {{ $pet->adoption_status === 'available' ? 'desactivar' : 'activar' }} a {{ $pet->name }}?"
+                                                        class="flex-1 text-center px-2 py-1 rounded text-xs font-medium {{ $pet->adoption_status === 'available' ? 'bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/50 dark:text-red-300 dark:hover:bg-red-800/50' : 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/50 dark:text-green-300 dark:hover:bg-green-800/50' }} transition duration-200"
+                                                        title="{{ $pet->adoption_status === 'available' ? 'Desactivar mascota' : 'Activar mascota' }}">
+                                                    <i class="fas {{ $pet->adoption_status === 'available' ? 'fa-ban' : 'fa-check' }} mr-1"></i>
+                                                    {{ $pet->adoption_status === 'available' ? 'Desactivar' : 'Activar' }}
+                                                </button>
+                                            @else
+                                                <!-- Reactivar mascota -->
+                                                <button wire:click="togglePetStatus({{ $pet->id }})" 
+                                                        wire:confirm="¿Estás seguro de reactivar a {{ $pet->name }}?"
+                                                        class="flex-1 text-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/50 dark:text-green-300 dark:hover:bg-green-800/50 transition duration-200"
+                                                        title="Reactivar mascota">
+                                                    <i class="fas fa-undo mr-1"></i>Reactivar
+                                                </button>
+                                            @endif
+                                        @endcan
+                                        
+                                        @can('viewApplications', $pet)
+                                            @if($pet->adoptionApplications && $pet->adoptionApplications->count() > 0)
+                                                <!-- Ver solicitudes de adopción -->
+                                                <button wire:click="showApplications({{ $pet->id }})" 
+                                                        class="flex-1 text-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 dark:bg-purple-900/50 dark:text-purple-300 dark:hover:bg-purple-800/50 transition duration-200 relative"
+                                                        title="Ver solicitudes ({{ $pet->adoptionApplications->count() }})">
+                                                    <i class="fas fa-clipboard-list mr-1"></i>
+                                                    Solicitudes
+                                                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                                                        {{ $pet->adoptionApplications->count() }}
+                                                    </span>
+                                                </button>
+                                            @endif
+                                        @endcan
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Panel normal para adoptantes y usuarios sin permisos administrativos -->
+                                @can('applyForAdoption', $pet)
+                                    @if($pet->adoption_status === 'available')
+                                        @php
+                                            $userApplication = $this->getUserApplicationStatus($pet->id);
+                                        @endphp
+                                        @if($userApplication)
+                                            <div class="space-y-2">
+                                                <button disabled
+                                                        class="block w-full text-center px-4 py-2 rounded bg-gray-500/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
+                                                    <i class="fas fa-clock mr-2"></i>Solicitud enviada
+                                                </button>
+                                                <button wire:click="showPetDetails({{ $pet->id }})" 
+                                                        class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm">
+                                                    <i class="fas fa-eye mr-2"></i>Ver detalles
+                                                </button>
+                                            </div>
+                                        @else
+                                            <div class="space-y-2">
+                                                <a href="{{ route('adoption.create', $pet) }}" 
+                                                   class="block w-full text-center px-4 py-2 rounded bg-gradient-to-r from-[#216300] to-[#185514] text-white font-medium hover:from-[#5cb132]/70 hover:to-[#185514]/70 transition duration-200 shadow-lg">
+                                                    <i class="fas fa-heart mr-2"></i>Solicitar adopción
+                                                </a>
+                                                <button wire:click="showPetDetails({{ $pet->id }})" 
+                                                        class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm">
+                                                    <i class="fas fa-eye mr-2"></i>Ver detalles
+                                                </button>
+                                            </div>
+                                        @endif
+                                    @endif
                                 @else
-                                    <a href="{{ route('adoption.create', $pet) }}" 
-                                       class="block w-full text-center px-4 py-2 rounded bg-gradient-to-r from-[#216300] to-[#185514] text-white font-medium hover:from-[#5cb132]/70 hover:to-[#185514]/70 transition duration-200 shadow-lg">
-                                        Solicitar adopción
-                                    </a>
-                                @endif
-                            @elseif($pet->adoption_status === 'pending')
-                                <button disabled
-                                        class="block w-full text-center px-4 py-2 rounded bg-orange-500/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
-                                    En proceso de adopción
-                                </button>
-                            @else
-                                <button disabled
-                                        class="block w-full text-center px-4 py-2 rounded bg-blue-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
-                                    Ya adoptado
-                                </button>
-                            @endif
+                                    <!-- Solo ver detalles para usuarios sin permisos de adopción -->
+                                    <div class="space-y-2">
+                                        @if($pet->adoption_status === 'pending')
+                                            <button disabled
+                                                    class="block w-full text-center px-4 py-2 rounded bg-orange-500/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
+                                                <i class="fas fa-hourglass-half mr-2"></i>En proceso de adopción
+                                            </button>
+                                        @elseif($pet->adoption_status === 'adopted')
+                                            <button disabled
+                                                    class="block w-full text-center px-4 py-2 rounded bg-blue-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
+                                                <i class="fas fa-check-circle mr-2"></i>Ya adoptado
+                                            </button>
+                                        @else
+                                            <button disabled
+                                                    class="block w-full text-center px-4 py-2 rounded bg-gray-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
+                                                <i class="fas fa-ban mr-2"></i>No disponible
+                                            </button>
+                                        @endif
+                                        <button wire:click="showPetDetails({{ $pet->id }})" 
+                                                class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm">
+                                            <i class="fas fa-eye mr-2"></i>Ver detalles
+                                        </button>
+                                    </div>
+                                @endcan
+                            @endcan
                         @else
+                            <!-- Panel para usuarios no autenticados -->
                             @if($pet->adoption_status === 'available')
-                                <a href="{{ route('login') }}" 
-                                   class="block w-full text-center px-4 py-2 rounded bg-gray-500/80 text-white font-medium hover:bg-gray-600/80 transition duration-200 backdrop-blur-sm">
-                                    Inicia sesión para adoptar
-                                </a>
+                                <div class="space-y-2">
+                                    <a href="{{ route('login') }}" 
+                                       class="block w-full text-center px-4 py-2 rounded bg-gray-500/80 text-white font-medium hover:bg-gray-600/80 transition duration-200 backdrop-blur-sm">
+                                        <i class="fas fa-sign-in-alt mr-2"></i>Inicia sesión para adoptar
+                                    </a>
+                                    <button wire:click="showPetDetails({{ $pet->id }})" 
+                                            class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm">
+                                        <i class="fas fa-eye mr-2"></i>Ver detalles
+                                    </button>
+                                </div>
                             @else
-                                <button disabled
-                                        class="block w-full text-center px-4 py-2 rounded bg-gray-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
-                                    No disponible
-                                </button>
+                                <div class="space-y-2">
+                                    <button disabled
+                                            class="block w-full text-center px-4 py-2 rounded bg-gray-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
+                                        <i class="fas fa-ban mr-2"></i>No disponible
+                                    </button>
+                                    <button wire:click="showPetDetails({{ $pet->id }})" 
+                                            class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm">
+                                        <i class="fas fa-eye mr-2"></i>Ver detalles
+                                    </button>
+                                </div>
                             @endif
                         @endauth
                     </div>
@@ -180,9 +283,7 @@
         @empty
             <div class="col-span-full text-center py-12">
                 <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-8">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
+                    <i class="fas fa-search text-6xl text-gray-400 mx-auto mb-4"></i>
                     <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">No se encontraron mascotas</h3>
                     <p class="mt-2 text-gray-500 dark:text-gray-400">
                         @if(!empty($search))

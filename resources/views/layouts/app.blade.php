@@ -39,7 +39,7 @@
 
     <!-- Livewire Styles -->
     @livewireStyles
-
+    @stack('styles')
     <!-- Modo oscuro automático -->
     <script>
         // Verificar preferencia guardada en localStorage
@@ -95,7 +95,7 @@
 
     <!-- Livewire Scripts -->
     @livewireScripts
-
+    @stack('scripts')
     <!-- Script para toggle de modo oscuro -->
     <script>
         function toggleTheme() {
