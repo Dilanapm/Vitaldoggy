@@ -108,7 +108,7 @@
             </div>
 
             <!-- Acciones Principales -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                 <!-- Gestión de Usuarios -->
                 <a href="{{ route('admin.users.index') }}" 
                    class="group relative overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105">
@@ -174,6 +174,30 @@
                         <p class="text-white/90 mb-4">Administrar cuidadores y sus asignaciones</p>
                         <div class="flex items-center text-sm font-medium">
                             <span>Ver cuidadores</span>
+                            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Gestión de Mascotas -->
+                <a href="{{ route('admin.pets.index') }}" 
+                   class="group relative overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-br from-green-600/90 to-blue-600/80"></div>
+                    <div class="relative p-8 text-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M4.5 11l2.25 2.25L11.25 9l5 4.5V21H2.25V11H4.5z M19.5 10.5l2.25 2.25L16.5 18l-2.25-2.25L19.5 10.5z M12 2C8.5 2 5.5 3.5 4 6c0 4 3.5 7 8 7s8-3 8-7c-1.5-2.5-4.5-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <span class="text-2xl font-bold opacity-20">🐕</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Gestionar Mascotas</h3>
+                        <p class="text-white/90 mb-4">Crear, editar y administrar todas las mascotas</p>
+                        <div class="flex items-center text-sm font-medium">
+                            <span>Ver mascotas</span>
                             <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>

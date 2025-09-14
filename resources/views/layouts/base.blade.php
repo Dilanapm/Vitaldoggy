@@ -58,7 +58,7 @@
     
     <!-- Livewire Styles -->
     @livewireStyles
-    
+    @stack('styles')
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -166,6 +166,7 @@
     
     <!-- Livewire Scripts -->
     @livewireScripts
+    @stack('scripts')
 </body>
 
 </html>

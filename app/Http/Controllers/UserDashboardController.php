@@ -13,13 +13,35 @@ class UserDashboardController extends Controller
         /** @var User $user */
         $user = auth()->user();
         
-        // Obtener el estado de los roles/logros
+        // Si el usuario es cuidador, mostrar dashboard específico
+        if ($user->role === 'caretaker') {
+            return $this->caretakerDashboard();
+        }
+        
+        // Obtener el estado de los roles/logros para usuarios normales
         $roleAchievements = $this->getUserRoleAchievements($user);
         
         // Obtener estadísticas del usuario
         $userStats = $this->getUserStatistics($user);
         
         return view('user.dashboard', compact('roleAchievements', 'userStats'));
+    }
+
+    /**
+     * Dashboard específico para cuidadores
+     */
+    public function caretakerDashboard(): View
+    {
+        /** @var User $user */
+        $user = auth()->user();
+        
+        // Estadísticas específicas del refugio del cuidador
+        $stats = $this->getCaretakerStats($user);
+        
+        // Notificaciones para el cuidador
+        $notifications = $this->getCaretakerNotifications($user);
+        
+        return view('caretaker.dashboard', compact('stats', 'notifications'));
     }
 
     /**
@@ -144,6 +166,129 @@ class UserDashboardController extends Controller
         // TODO: Implementar cuando tengas modelo de voluntarios
         // Por ahora verifica si se registró como voluntario
         return $user->hasRole('voluntario') ? 100 : 0;
+    }
+
+    /**
+     * Obtiene estadísticas específicas para cuidadores
+     */
+    private function getCaretakerStats(User $user): array
+    {
+        if (!$user->shelter_id) {
+            return $this->getEmptyCaretakerStats();
+        }
+
+        $shelter = $user->shelter;
+        
+        // Mascotas del refugio
+        $shelterPets = \App\Models\Pet::where('shelter_id', $user->shelter_id);
+        $totalShelterPets = $shelterPets->count();
+        $availablePets = $shelterPets->where('adoption_status', 'available')->count();
+        $adoptedPets = $shelterPets->where('adoption_status', 'adopted')->count();
+
+        // Solicitudes de adopción para mascotas del refugio
+        $pendingApplications = \App\Models\AdoptionApplication::whereHas('pet', function($query) use ($user) {
+            $query->where('shelter_id', $user->shelter_id);
+        })->where('status', 'pending')->count();
+
+        // Aplicaciones de esta semana
+        $applicationsThisWeek = \App\Models\AdoptionApplication::whereHas('pet', function($query) use ($user) {
+            $query->where('shelter_id', $user->shelter_id);
+        })->where('created_at', '>=', now()->startOfWeek())->count();
+
+        // Adopciones de este mes
+        $adoptionsThisMonth = \App\Models\AdoptionApplication::whereHas('pet', function($query) use ($user) {
+            $query->where('shelter_id', $user->shelter_id);
+        })->where('status', 'approved')
+        ->where('created_at', '>=', now()->startOfMonth())->count();
+
+        // Capacidad y ocupación
+        $capacity = $shelter->capacity ?? 100;
+        $occupancyPercentage = $capacity > 0 ? round(($totalShelterPets / $capacity) * 100, 1) : 0;
+
+        return [
+            'shelter_pets' => $totalShelterPets,
+            'available_pets' => $availablePets,
+            'adopted_pets' => $adoptedPets,
+            'pending_applications' => $pendingApplications,
+            'applications_this_week' => $applicationsThisWeek,
+            'adoptions_this_month' => $adoptionsThisMonth,
+            'capacity' => $capacity,
+            'occupancy_percentage' => $occupancyPercentage,
+        ];
+    }
+
+    /**
+     * Obtiene notificaciones para cuidadores
+     */
+    private function getCaretakerNotifications(User $user): array
+    {
+        if (!$user->shelter_id) {
+            return [];
+        }
+
+        $notifications = [];
+
+        // Solicitudes pendientes recientes
+        $recentApplications = \App\Models\AdoptionApplication::with(['pet', 'user'])
+            ->whereHas('pet', function($query) use ($user) {
+                $query->where('shelter_id', $user->shelter_id);
+            })
+            ->where('status', 'pending')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->latest()
+            ->take(5)
+            ->get();
+
+        foreach ($recentApplications as $application) {
+            $notifications[] = [
+                'icon' => '📋',
+                'description' => "Nueva solicitud de adopción para {$application->pet->name} por {$application->user->name}",
+                'date' => $application->created_at,
+                'action_url' => route('admin.adoption-applications.show', $application->id),
+            ];
+        }
+
+        // Mascotas que necesitan atención
+        $petsNeedingAttention = \App\Models\Pet::where('shelter_id', $user->shelter_id)
+            ->where(function($query) {
+                $query->where('health_status', 'Tratamiento')
+                      ->orWhereNotNull('special_needs');
+            })
+            ->take(3)
+            ->get();
+
+        foreach ($petsNeedingAttention as $pet) {
+            $notifications[] = [
+                'icon' => '🏥',
+                'description' => "{$pet->name} requiere atención especial: {$pet->health_status}",
+                'date' => $pet->updated_at,
+                'action_url' => route('admin.pets.edit', $pet->id),
+            ];
+        }
+
+        // Ordenar por fecha más reciente
+        usort($notifications, function($a, $b) {
+            return $b['date']->timestamp - $a['date']->timestamp;
+        });
+
+        return array_slice($notifications, 0, 10); // Limitar a 10 notificaciones
+    }
+
+    /**
+     * Retorna estadísticas vacías si el cuidador no tiene refugio asignado
+     */
+    private function getEmptyCaretakerStats(): array
+    {
+        return [
+            'shelter_pets' => 0,
+            'available_pets' => 0,
+            'adopted_pets' => 0,
+            'pending_applications' => 0,
+            'applications_this_week' => 0,
+            'adoptions_this_month' => 0,
+            'capacity' => 0,
+            'occupancy_percentage' => 0,
+        ];
     }
 
     /**

@@ -9,44 +9,96 @@
         </div>
         
         <!-- Filtros y búsqueda -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <!-- Búsqueda -->
-            <div>
+            <div class="lg:col-span-1">
                 <input type="text" 
                        wire:model.live.debounce.300ms="search"
-                       placeholder="Buscar por nombre, raza..."
+                       placeholder="Buscar por nombre, raza, refugio..."
                        class="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg focus:ring-primary focus:border-primary bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400">
             </div>
             
-            <!-- Filtro por estado -->
-            <div>
-                <select wire:model.live="filterByStatus" 
-                        class="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg focus:ring-primary focus:border-primary bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white">
-                    <option value="all">Todos los estados</option>
-                    <option value="available">Disponibles</option>
-                    <option value="pending">En proceso</option>
-                    <option value="adopted">Adoptados</option>
-                </select>
-            </div>
+            <!-- Filtro por estado (solo admin y cuidadores) -->
+            @auth
+                @if(in_array(auth()->user()->role, ['admin', 'caretaker']))
+                    <div>
+                        <select wire:model.live="filterByStatus" 
+                                class="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg focus:ring-primary focus:border-primary bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white">
+                            <option value="all">Todos los estados</option>
+                            <option value="available">Disponibles</option>
+                            <option value="pending">En proceso</option>
+                            <option value="adopted">Adoptados</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                    </div>
+                @endif
+                
+                <!-- Filtro por refugio (solo admin) -->
+                @if(auth()->user()->role === 'admin')
+                    <div>
+                        <select wire:model.live="filterByShelter" 
+                                class="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg focus:ring-primary focus:border-primary bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white">
+                            <option value="all">Todos los refugios</option>
+                            @foreach($shelters as $shelter)
+                                <option value="{{ $shelter->id }}">{{ $shelter->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+            @endauth
             
             <!-- Ordenar -->
             <div>
-                
                 <select wire:model.live="sortBy" 
                         class="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg focus:ring-primary focus:border-primary bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white">
                     <option value="latest">Más recientes</option>
                     <option value="oldest">Más antiguos</option>
                     <option value="name">Por nombre</option>
                     <option value="age">Por edad</option>
+                    @auth
+                        @if(auth()->user()->role === 'admin')
+                            <option value="shelter">Por refugio</option>
+                        @endif
+                    @endauth
                 </select>
             </div>
         </div>
-        <button wire:click="refreshPets" 
+        
+        <!-- Información del contexto según rol -->
+        @auth
+            <div class="mb-4 p-3 bg-blue-50/80 dark:bg-blue-900/20 backdrop-blur-sm border border-blue-200/50 dark:border-blue-800/50 rounded-lg">
+                <div class="flex items-center text-blue-700 dark:text-blue-300 text-sm">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    @if(auth()->user()->role === 'admin')
+                        <span>Como <strong>administrador</strong>, puedes ver y gestionar todas las mascotas de todos los refugios.</span>
+                    @elseif(auth()->user()->role === 'caretaker')
+                        @php
+                            $shelterName = auth()->user()->shelter ? auth()->user()->shelter->name : 'Sin refugio asignado';
+                        @endphp
+                        <span>Como <strong>cuidador</strong> del <strong>{{ $shelterName }}</strong>, puedes ver y gestionar las mascotas de tu refugio.</span>
+                    @else
+                        <span>Estás viendo todas las <strong>mascotas disponibles para adopción</strong> de todos los refugios.</span>
+                    @endif
+                </div>
+            </div>
+        @else
+            <div class="mb-4 p-3 bg-green-50/80 dark:bg-green-900/20 backdrop-blur-sm border border-green-200/50 dark:border-green-800/50 rounded-lg">
+                <div class="flex items-center text-green-700 dark:text-green-300 text-sm">
+                    <i class="fas fa-heart mr-2"></i>
+                    <span>Estás viendo todas las <strong>mascotas disponibles para adopción</strong>. <a href="{{ route('login') }}" class="underline hover:no-underline">Inicia sesión</a> para solicitar adopciones.</span>
+                </div>
+            </div>
+        @endauth
+        
+        <!-- Botón actualizar -->
+        <div class="mb-4">
+            <button wire:click="refreshPets" 
                     class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#751629] to-[#f56e5c] text-white rounded-lg hover:from-[#751629]/90 hover:to-[#f56e5c]/90 transition duration-200 shadow-lg">
                 <i wire:loading.remove wire:target="refreshPets" class="fas fa-sync mr-2"></i>
                 <i wire:loading wire:target="refreshPets" class="fas fa-sync fa-spin mr-2"></i>
                 Actualizar
             </button>
+        </div>
     </div>
 
     <!-- Indicador de carga -->
@@ -96,8 +148,16 @@
 
                 <div class="p-4 flex-1 flex flex-col">
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">{{ $pet->name }}</h2>
-                    <p class="text-gray-600 dark:text-gray-300 mb-2">{{ $pet->breed ?? 'Raza desconocida' }}</p>
-                    <p class="text-gray-500 dark:text-gray-400 mb-4">Edad: {{ $pet->age ?? 'N/D' }}</p>
+                    <p class="text-gray-600 dark:text-gray-300 mb-1">{{ $pet->breed ?? 'Raza desconocida' }}</p>
+                    <p class="text-gray-500 dark:text-gray-400 mb-2">Edad: {{ $pet->age ?? 'N/D' }}</p>
+                    
+                    <!-- Información del refugio -->
+                    @if($pet->shelter)
+                        <div class="mb-3 flex items-center text-sm text-gray-600 dark:text-gray-400">
+                            <i class="fas fa-home mr-1"></i>
+                            <span>{{ $pet->shelter->name }}</span>
+                        </div>
+                    @endif
                     
                     <!-- Estado de solicitud del usuario -->
                     @auth

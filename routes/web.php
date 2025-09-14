@@ -86,6 +86,17 @@ Route::prefix('admin')->middleware(['auth','verified' , 'role:admin'])->group(fu
     Route::put('/caretakers/{caretaker}', [App\Http\Controllers\CaretakerController::class, 'update'])->name('admin.caretakers.update');
     Route::patch('/caretakers/{caretaker}/toggle-status', [App\Http\Controllers\CaretakerController::class, 'toggleStatus'])->name('admin.caretakers.toggle-status');
     Route::delete('/caretakers/{caretaker}', [App\Http\Controllers\CaretakerController::class, 'destroy'])->name('admin.caretakers.destroy');
+    
+    // Gestión de Mascotas
+    Route::get('/pets', [App\Http\Controllers\Admin\AdminController::class, 'pets'])->name('admin.pets.index');
+    Route::get('/pets/create', [App\Http\Controllers\Admin\AdminController::class, 'createPet'])->name('admin.pets.create');
+    Route::post('/pets', [App\Http\Controllers\Admin\AdminController::class, 'storePet'])->name('admin.pets.store');
+    Route::get('/pets/{pet}', [App\Http\Controllers\Admin\AdminController::class, 'showPet'])->name('admin.pets.show');
+    Route::get('/pets/{pet}/edit', [App\Http\Controllers\Admin\AdminController::class, 'editPet'])->name('admin.pets.edit');
+    Route::put('/pets/{pet}', [App\Http\Controllers\Admin\AdminController::class, 'updatePet'])->name('admin.pets.update');
+    Route::patch('/pets/{pet}/toggle-status', [App\Http\Controllers\Admin\AdminController::class, 'togglePetStatus'])->name('admin.pets.toggle-status');
+    Route::delete('/pets/{pet}', [App\Http\Controllers\Admin\AdminController::class, 'destroyPet'])->name('admin.pets.destroy');
+    Route::get('/pets/{pet}/applications', [App\Http\Controllers\Admin\AdminController::class, 'petApplications'])->name('admin.pets.applications');
 });
 
 // Rutas para usuarios normales
@@ -103,10 +114,8 @@ Route::prefix('donor')->middleware(['auth', 'verified' , 'role:donor'])->group(f
 // Rutas para cuidadores (caretakers)
 Route::prefix('caretaker')->middleware(['auth', 'verified', 'role:caretaker'])->group(function () {
     // Route:prefix 'caretaker' se utiliza para agrupar las rutas relacionadas con los cuidadores.
-    // Redirigir el dashboard a la lista de cuidadores
-    Route::get('/dashboard', function () {
-        return redirect()->route('caretaker.caretakers.index');
-    })->name('caretaker.dashboard');
+    // Dashboard del cuidador
+    Route::get('/dashboard', [App\Http\Controllers\UserDashboardController::class, 'caretakerDashboard'])->name('caretaker.dashboard');
     
     // Rutas para gestión de cuidadores - acceso de cuidador
     Route::get('/caretakers', [App\Http\Controllers\CaretakerController::class, 'index'])->name('caretaker.caretakers.index');
@@ -116,6 +125,13 @@ Route::prefix('caretaker')->middleware(['auth', 'verified', 'role:caretaker'])->
     Route::get('/caretakers/{caretaker}/edit', [App\Http\Controllers\CaretakerController::class, 'edit'])->name('caretaker.caretakers.edit');
     Route::put('/caretakers/{caretaker}', [App\Http\Controllers\CaretakerController::class, 'update'])->name('caretaker.caretakers.update');
     Route::patch('/caretakers/{caretaker}/toggle-status', [App\Http\Controllers\CaretakerController::class, 'toggleStatus'])->name('caretaker.caretakers.toggle-status');
+    
+    // Rutas para gestión de solicitudes de adopción - acceso de cuidador
+    Route::get('/adoption-applications', [App\Http\Controllers\Caretaker\AdoptionApplicationController::class, 'index'])->name('caretaker.adoption-applications.index');
+    Route::get('/adoption-applications/{adoptionApplication}', [App\Http\Controllers\Caretaker\AdoptionApplicationController::class, 'show'])->name('caretaker.adoption-applications.show');
+    Route::patch('/adoption-applications/{adoptionApplication}/approve', [App\Http\Controllers\Caretaker\AdoptionApplicationController::class, 'approve'])->name('caretaker.adoption-applications.approve');
+    Route::patch('/adoption-applications/{adoptionApplication}/reject', [App\Http\Controllers\Caretaker\AdoptionApplicationController::class, 'reject'])->name('caretaker.adoption-applications.reject');
+    Route::patch('/adoption-applications/{adoptionApplication}/review', [App\Http\Controllers\Caretaker\AdoptionApplicationController::class, 'markAsUnderReview'])->name('caretaker.adoption-applications.review');
 });
 
 // Rutas compartidas entre admin y donante
@@ -149,7 +165,7 @@ Route::get('/dashboard', function () {
         case 'donor':
             return redirect()->route('donor.dashboard');
         case 'caretaker':
-            return redirect()->route('caretaker.caretakers.index');
+            return redirect()->route('caretaker.dashboard');
         default:
             return view('dashboard');
     }

@@ -13,14 +13,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         // Ejecutar seeders en orden de dependencias
+         // Ejecutar seeders en orden de dependencias correcto
         $this->call([
-            UserSeeder::class,       // 1. Usuarios primero
-            ShelterSeeder::class,    // 2. Albergues
-            CaretakerSeeder::class,  // 3. Cuidadores (necesita users y shelters)
-            PetSeeder::class,        // 4. Mascotas (necesita shelters y caretakers)
+            ShelterSeeder::class,    // 1. Refugios primero (UserSeeder los necesita)
+            UserSeeder::class,       // 2. Usuarios con lógica de achievements
+            // CaretakerSeeder::class,  // Ya no necesario (UserSeeder crea cuidadores)
+            // PetSeeder::class,        // Ya no necesario (UserSeeder crea mascotas)
         ]);
 
-        $this->command->info('🎉 ¡Todos los seeders ejecutados exitosamente!');
+        $this->command->info('🎉 ¡Base de datos sembrada con nueva lógica de achievements!');
+        $this->command->info('   ✅ Refugios creados');
+        $this->command->info('   ✅ Usuarios con roles únicos (admin/user/caretaker)');
+        $this->command->info('   ✅ Achievements basados en actividades reales');
+        $this->command->info('   ✅ Adopciones y donaciones de ejemplo');
+        $this->command->info('   ✅ Sistema completamente funcional');
     }
 }

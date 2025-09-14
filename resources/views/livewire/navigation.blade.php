@@ -6,7 +6,7 @@
         <nav class="container mx-auto px-6">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">
-                    <a href="{{ route('home') }}" class="flex items-center space-x-2 hover:opacity-80 transition duration-200">
+                    <a href="{{ $this->getLogoRoute() }}" class="flex items-center space-x-2 hover:opacity-80 transition duration-200">
                         <img src="{{ asset('logo.png') }}" alt="Logo VitalDoggy" class="w-20 h-20 object-contain">
                         <span class="text-2xl font-bold text-white dark:text-white">VitalDoggy</span>
                     </a>
@@ -16,17 +16,22 @@
                 <div class="hidden lg:flex items-center space-x-6">
                     <!-- Navigation Links -->
                     <nav class="flex items-center space-x-6">
-                        <a href="{{ route('services.index') }}" 
-                            class="{{ $this->isActiveRoute('services.*') ? 'text-primary dark:text-primary font-semibold' : 'text-white dark:text-white hover:text-orange-200 dark:hover:text-primary' }} transition duration-200 font-medium">
-                            Servicios
-                        </a>
+                        @if(!$this->isAdmin() && !$this->isCaretaker())
+                            <a href="{{ route('services.index') }}" 
+                                class="{{ $this->isActiveRoute('services.*') ? 'text-primary dark:text-primary font-semibold' : 'text-white dark:text-white hover:text-orange-200 dark:hover:text-primary' }} transition duration-200 font-medium">
+                                Servicios
+                            </a>
+                        @endif
                         <a href="{{ route('pets.index') }}" 
                             class="{{ $this->isActiveRoute(['pets.*', 'adoption.*']) ? 'text-primary dark:text-primary font-semibold' : 'text-white dark:text-white hover:text-orange-200 dark:hover:text-primary' }} transition duration-200 font-medium">
-                            Adopciones
+                            {{ $this->getPetsLinkText() }}
                         </a>
-                        <a href="{{ route('shelters.index') }}" 
+                        <a href="{{ $this->getSheltersRoute() }}" 
                             class="{{ $this->isActiveRoute('shelters.*') ? 'text-primary dark:text-primary font-semibold' : 'text-white dark:text-white hover:text-orange-200 dark:hover:text-primary' }} transition duration-200 font-medium">
-                            Refugios
+                            {{ $this->getSheltersLinkText() }}
+                            @if($this->isCaretaker() && $this->getCaretakerShelter())
+                                <span class="text-xs opacity-75 block">{{ Str::limit($this->getCaretakerShelter()->name, 20) }}</span>
+                            @endif
                         </a>
                         <a href="#donaciones" 
                             class="{{ $this->isActiveRoute(['donaciones', 'donaciones/*']) ? 'text-primary dark:text-primary font-semibold' : 'text-white dark:text-white hover:text-orange-200 dark:hover:text-primary' }} transition duration-200 font-medium">
@@ -174,17 +179,24 @@
 
                         <!-- Navigation Links -->
                         <div class="border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
-                            <a href="{{ route('services.index') }}" 
-                                class="{{ $this->isActiveRoute('services.*') ? 'bg-primary/10 text-primary border-l-4 border-primary font-semibold' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} block px-4 py-2 rounded-md transition duration-200">
-                                Servicios
-                            </a>
+                            @if(!$this->isAdmin() && !$this->isCaretaker())
+                                <a href="{{ route('services.index') }}" 
+                                    class="{{ $this->isActiveRoute('services.*') ? 'bg-primary/10 text-primary border-l-4 border-primary font-semibold' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} block px-4 py-2 rounded-md transition duration-200">
+                                    Servicios
+                                </a>
+                            @endif
                             <a href="{{ route('pets.index') }}" 
                                 class="{{ $this->isActiveRoute(['pets.*', 'adoption.*']) ? 'bg-primary/10 text-primary border-l-4 border-primary font-semibold' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} block px-4 py-2 rounded-md transition duration-200">
-                                Adopciones
+                                {{ $this->getPetsLinkText() }}
                             </a>
-                            <a href="{{ route('shelters.index') }}" 
+                            <a href="{{ $this->getSheltersRoute() }}" 
                                 class="{{ $this->isActiveRoute('shelters.*') ? 'bg-primary/10 text-primary border-l-4 border-primary font-semibold' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} block px-4 py-2 rounded-md transition duration-200">
-                                Refugios
+                                {{ $this->getSheltersLinkText() }}
+                                @if($this->isCaretaker() && $this->getCaretakerShelter())
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                        {{ $this->getCaretakerShelter()->name }}
+                                    </div>
+                                @endif
                             </a>
                             <a href="#donaciones" 
                                 class="{{ $this->isActiveRoute(['donaciones', 'donaciones/*']) ? 'bg-primary/10 text-primary border-l-4 border-primary font-semibold' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} block px-4 py-2 rounded-md transition duration-200">

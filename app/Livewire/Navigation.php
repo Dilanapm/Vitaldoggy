@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class Navigation extends Component
 {
@@ -102,6 +103,83 @@ class Navigation extends Component
     public function isAdmin()
     {
         return Auth::check() && Auth::user()->hasRole('admin');
+    }
+
+    // Helper function para verificar si el usuario es cuidador
+    public function isCaretaker()
+    {
+        return Auth::check() && Auth::user()->hasRole('caretaker');
+    }
+
+    // Obtener texto del enlace de adopciones según el rol
+    public function getPetsLinkText()
+    {
+        if ($this->isCaretaker()) {
+            return 'Mis Mascotas';
+        }
+        return 'Adopciones';
+    }
+
+    // Obtener texto del enlace de refugios según el rol
+    public function getSheltersLinkText()
+    {
+        if ($this->isCaretaker()) {
+            return 'Mi Refugio';
+        } elseif ($this->isAdmin()) {
+            return 'Mis Refugios';
+        }
+        return 'Refugios';
+    }
+
+    // Obtener ruta de refugios según el rol
+    public function getSheltersRoute()
+    {
+        if ($this->isCaretaker()) {
+            // Cuidador va a la vista de su refugio específico
+            $user = Auth::user();
+            if ($user && $user->shelter_id) {
+                return route('shelters.show', $user->shelter_id);
+            }
+        } elseif ($this->isAdmin()) {
+            // Admin va al panel de administración de refugios
+            return route('admin.shelters.index');
+        }
+        // Usuarios normales van al listado público general
+        return route('shelters.index');
+    }
+
+    // Obtener información del refugio del cuidador
+    public function getCaretakerShelter()
+    {
+        if ($this->isCaretaker()) {
+            $user = Auth::user();
+            if ($user && $user->shelter_id) {
+                return $user->shelter;
+            }
+        }
+        return null;
+    }
+
+    // Obtener ruta del logo según el rol del usuario
+    public function getLogoRoute()
+    {
+        if (!Auth::check()) {
+            // Usuario no autenticado va al home
+            return route('home');
+        }
+
+        $user = Auth::user();
+        
+        if ($this->isAdmin()) {
+            // Admin va a su dashboard
+            return route('admin.dashboard');
+        } elseif ($this->isCaretaker()) {
+            // Cuidador va a su dashboard (puede ser el user.dashboard o uno específico)
+            return route('caretaker.dashboard');
+        } else {
+            // Usuario normal va al home
+            return route('home');
+        }
     }
 
     public function render()

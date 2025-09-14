@@ -15,6 +15,7 @@ class PetListing extends Component
 
     public $search = '';
     public $filterByStatus = 'all';
+    public $filterByShelter = 'all';
     public $sortBy = 'latest';
     public $refreshInterval = 30; // Segundos para auto-refresh
     public $showPetModal = false;
@@ -23,6 +24,7 @@ class PetListing extends Component
     protected $queryString = [
         'search' => ['except' => ''],
         'filterByStatus' => ['except' => 'all'],
+        'filterByShelter' => ['except' => 'all'],
         'sortBy' => ['except' => 'latest']
     ];
 
@@ -38,6 +40,11 @@ class PetListing extends Component
     }
 
     public function updatingFilterByStatus()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterByShelter()
     {
         $this->resetPage();
     }
@@ -73,11 +80,42 @@ class PetListing extends Component
     public function getPets()
     {
         $query = \App\Models\Pet::query()
-            // Foto primaria (rápido) + conteo de postulaciones
-            ->with(['primaryPhoto:id,pet_id,photo_path'])
+            // Incluir relaciones necesarias
+            ->with(['primaryPhoto:id,pet_id,photo_path', 'shelter:id,name'])
             ->withCount('adoptionApplications');
 
-        // Búsqueda (limpia y opcional)
+        // FILTROS BASADOS EN ROL DEL USUARIO
+        if (Auth::check()) {
+            $user = Auth::user();
+            
+            switch ($user->role) {
+                case 'admin':
+                    // Admin puede ver todas las mascotas de todos los refugios
+                    // No aplicamos filtro adicional
+                    break;
+                    
+                case 'caretaker':
+                    // Cuidador solo puede ver mascotas de su refugio
+                    if ($user->shelter_id) {
+                        $query->where('shelter_id', $user->shelter_id);
+                    } else {
+                        // Si el cuidador no tiene refugio asignado, no ve nada
+                        $query->where('id', 0); // Query que no retorna resultados
+                    }
+                    break;
+                    
+                case 'user':
+                default:
+                    // Usuarios normales solo ven mascotas disponibles para adopción
+                    $query->where('adoption_status', 'available');
+                    break;
+            }
+        } else {
+            // Usuarios no autenticados solo ven mascotas disponibles
+            $query->where('adoption_status', 'available');
+        }
+
+        // Búsqueda por texto
         $query->when(
             filled(trim($this->search)),
             function ($q) {
@@ -85,33 +123,64 @@ class PetListing extends Component
                 $q->where(function ($qq) use ($s) {
                     $qq->where('name', 'like', $s)
                     ->orWhere('breed', 'like', $s)
-                    ->orWhere('description', 'like', $s);
+                    ->orWhere('description', 'like', $s)
+                    ->orWhere('color', 'like', $s)
+                    ->orWhereHas('shelter', function($shelterQuery) use ($s) {
+                        $shelterQuery->where('name', 'like', $s);
+                    });
                 });
             }
         );
 
-        // Filtro por estado (si no es 'all')
-        $query->when(
-            $this->filterByStatus !== 'all',
-            fn($q) => $q->where('adoption_status', $this->filterByStatus)
-        );
+        // Filtro por estado (solo para admin y cuidadores)
+        if (Auth::check() && in_array(Auth::user()->role, ['admin', 'caretaker'])) {
+            $query->when(
+                $this->filterByStatus !== 'all',
+                fn($q) => $q->where('adoption_status', $this->filterByStatus)
+            );
+        }
 
-        // Orden
+        // Filtro por refugio (solo para admin)
+        if (Auth::check() && Auth::user()->role === 'admin') {
+            $query->when(
+                $this->filterByShelter !== 'all',
+                fn($q) => $q->where('shelter_id', $this->filterByShelter)
+            );
+        }
+
+        // Ordenamiento
         $query
             ->when($this->sortBy === 'name', function ($q) {
-                // Case-insensitive; usa COLLATE si tu collation no es CI
                 $q->orderByRaw('LOWER(name) ASC');
             })
             ->when($this->sortBy === 'age', function ($q) {
-                // NULLS LAST para age_months
                 $q->orderByRaw('age_months IS NULL, age_months ASC');
             })
             ->when($this->sortBy === 'oldest', fn($q) => $q->orderBy('created_at', 'asc'))
-            ->when(! in_array($this->sortBy, ['name','age','oldest'], true),
+            ->when($this->sortBy === 'shelter', function ($q) {
+                $q->join('shelters', 'pets.shelter_id', '=', 'shelters.id')
+                  ->orderBy('shelters.name', 'asc')
+                  ->select('pets.*'); // Asegurar que solo seleccionamos campos de pets
+            })
+            ->when(! in_array($this->sortBy, ['name','age','oldest','shelter'], true),
                 fn($q) => $q->orderBy('created_at','desc'));
 
-        // Si quieres que conserve los parámetros en los links de paginación:
         return $query->paginate(20)->withQueryString();
+    }
+
+    /**
+     * Obtener lista de refugios para filtro (solo admin)
+     */
+    public function getSheltersForFilter()
+    {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return collect();
+        }
+
+        return \App\Models\Shelter::select('id', 'name')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
     }
 
     /**
@@ -258,7 +327,8 @@ class PetListing extends Component
     public function render()
     {
         return view('livewire.pet-listing', [
-            'pets' => $this->getPets()
+            'pets' => $this->getPets(),
+            'shelters' => $this->getSheltersForFilter(),
         ]);
     }
 }

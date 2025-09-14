@@ -16,7 +16,7 @@ class Pet extends Model
         'is_sterilized','is_vaccinated','special_needs',
         'age_months','size','energy_level','trainability','good_with_kids','good_with_dogs',
         'good_with_cats','shedding_level','apartment_ok','external_source','external_id',
-        'photo_url','city','state',
+        'city','state',
     ];
 
     // 2) Casts para tipos correctos
@@ -74,11 +74,10 @@ class Pet extends Model
             return asset('storage/' . ltrim($primary->photo_path, '/'));
         }
 
-        if (!empty($this->photo_url)) {
-            if (preg_match('#^https?://#i', $this->photo_url)) {
-                return $this->photo_url;
-            }
-            return asset('storage/' . ltrim($this->photo_url, '/'));
+        // Fallback: si no hay foto principal cargada, buscar la primera foto
+        $firstPhoto = $this->photos()->where('is_primary', true)->first();
+        if ($firstPhoto && $firstPhoto->photo_path) {
+            return asset('storage/' . ltrim($firstPhoto->photo_path, '/'));
         }
 
         return null;

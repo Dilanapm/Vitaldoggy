@@ -88,6 +88,14 @@ class User extends Authenticatable
         return $this->hasMany(AdoptionApplication::class);
     }
 
+    /**
+     * Get the donations made by this user.
+     */
+    public function donations()
+    {
+        return $this->hasMany(Donation::class);
+    }
+
     // ========== GESTIÓN DE ROLES Y LOGROS ==========
     
     /**

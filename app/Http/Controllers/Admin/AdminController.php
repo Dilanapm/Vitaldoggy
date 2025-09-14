@@ -366,4 +366,159 @@ class AdminController extends Controller
 
         return redirect()->route('admin.shelters.index')->with('success', 'Refugio eliminado correctamente.');
     }
+
+    /**
+     * Gestión de Mascotas
+     */
+    
+    /**
+     * Display a listing of all pets - Using Livewire component
+     */
+    public function pets(): View
+    {
+        return view('admin.pets.index');
+    }
+
+    /**
+     * Show the form for creating a new pet
+     */
+    public function createPet(): View
+    {
+        $shelters = Shelter::where('status', 'active')->get();
+        $caretakers = Caretaker::with('shelter')->get();
+        
+        return view('admin.pets.create', compact('shelters', 'caretakers'));
+    }
+
+    /**
+     * Store a newly created pet in storage
+     */
+    public function storePet(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'species' => 'required|in:dog,cat,other',
+            'breed' => 'nullable|string|max:255',
+            'age' => 'nullable|integer|min:0|max:50',
+            'gender' => 'required|in:male,female',
+            'size' => 'required|in:small,medium,large',
+            'weight' => 'nullable|numeric|min:0|max:200',
+            'color' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'medical_info' => 'nullable|string|max:1000',
+            'behavior_notes' => 'nullable|string|max:1000',
+            'shelter_id' => 'required|exists:shelters,id',
+            'caretaker_id' => 'nullable|exists:caretakers,id',
+            'is_sterilized' => 'boolean',
+            'is_vaccinated' => 'boolean',
+            'is_dewormed' => 'boolean',
+            'adoption_status' => 'required|in:available,pending,adopted,inactive'
+        ]);
+
+        $pet = Pet::create($validatedData);
+
+        return redirect()->route('admin.pets.index')->with('success', 'Mascota creada correctamente.');
+    }
+
+    /**
+     * Display the specified pet
+     */
+    public function showPet(Pet $pet): View
+    {
+        $pet->load(['shelter', 'caretaker', 'photos', 'adoptionApplications.user']);
+        
+        return view('admin.pets.show', compact('pet'));
+    }
+
+    /**
+     * Show the form for editing the specified pet
+     */
+    public function editPet(Pet $pet): View
+    {
+        $shelters = Shelter::where('status', 'active')->get();
+        $caretakers = Caretaker::with('shelter')->get();
+        
+        return view('admin.pets.edit', compact('pet', 'shelters', 'caretakers'));
+    }
+
+    /**
+     * Update the specified pet in storage
+     */
+    public function updatePet(Request $request, Pet $pet)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'species' => 'required|in:dog,cat,other',
+            'breed' => 'nullable|string|max:255',
+            'age' => 'nullable|integer|min:0|max:50',
+            'gender' => 'required|in:male,female',
+            'size' => 'required|in:small,medium,large',
+            'weight' => 'nullable|numeric|min:0|max:200',
+            'color' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'medical_info' => 'nullable|string|max:1000',
+            'behavior_notes' => 'nullable|string|max:1000',
+            'shelter_id' => 'required|exists:shelters,id',
+            'caretaker_id' => 'nullable|exists:caretakers,id',
+            'is_sterilized' => 'boolean',
+            'is_vaccinated' => 'boolean',
+            'is_dewormed' => 'boolean',
+            'adoption_status' => 'required|in:available,pending,adopted,inactive'
+        ]);
+
+        $pet->update($validatedData);
+
+        return redirect()->route('admin.pets.index')->with('success', 'Mascota actualizada correctamente.');
+    }
+
+    /**
+     * Toggle pet status
+     */
+    public function togglePetStatus(Pet $pet)
+    {
+        if ($pet->adoption_status === 'available') {
+            $pet->adoption_status = 'inactive';
+            $message = 'Mascota desactivada correctamente.';
+        } else {
+            $pet->adoption_status = 'available';
+            $message = 'Mascota activada correctamente.';
+        }
+        
+        $pet->save();
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    /**
+     * Remove the specified pet from storage
+     */
+    public function destroyPet(Pet $pet)
+    {
+        // Delete photos if exist
+        if ($pet->photos) {
+            foreach ($pet->photos as $photo) {
+                if ($photo->photo_path) {
+                    Storage::disk('public')->delete($photo->photo_path);
+                }
+                $photo->delete();
+            }
+        }
+
+        $pet->delete();
+
+        return redirect()->route('admin.pets.index')->with('success', 'Mascota eliminada correctamente.');
+    }
+
+    /**
+     * Show applications for a specific pet
+     */
+    public function petApplications(Pet $pet): View
+    {
+        $applications = $pet->adoptionApplications()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.pets.applications', compact('pet', 'applications'));
+    }
 }
