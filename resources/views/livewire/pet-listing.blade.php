@@ -186,15 +186,8 @@
                             @can('manageAdoption', $pet)
                                 <!-- Panel de administración para admin y cuidadores autorizados -->
                                 <div class="space-y-2">
-                                    <!-- Botones de gestión -->
+                                    <!-- Botones de gestión administrativos -->
                                     <div class="flex space-x-1">
-                                        <!-- Ver detalles -->
-                                        <button wire:click="showPetDetails({{ $pet->id }})" 
-                                                class="flex-1 text-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-800/50 transition duration-200"
-                                                title="Ver detalles">
-                                            <i class="fas fa-eye mr-1"></i>Ver
-                                        </button>
-                                        
                                         @can('update', $pet)
                                             <!-- Editar mascota -->
                                             <button wire:click="editPet({{ $pet->id }})" 
@@ -213,10 +206,7 @@
                                                 <i class="fas fa-check-circle mr-1"></i>Adoptado
                                             </button>
                                         @endif
-                                    </div>
-                                    
-                                    <!-- Estado y acciones adicionales -->
-                                    <div class="flex space-x-1">
+                                        
                                         @can('toggleStatus', $pet)
                                             @if($pet->adoption_status !== 'inactive')
                                                 <!-- Desactivar mascota -->
@@ -237,106 +227,81 @@
                                                 </button>
                                             @endif
                                         @endcan
-                                        
-                                        @can('viewApplications', $pet)
-                                            @if($pet->adoptionApplications && $pet->adoptionApplications->count() > 0)
-                                                <!-- Ver solicitudes de adopción -->
-                                                <button wire:click="showApplications({{ $pet->id }})" 
-                                                        class="flex-1 text-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 dark:bg-purple-900/50 dark:text-purple-300 dark:hover:bg-purple-800/50 transition duration-200 relative"
-                                                        title="Ver solicitudes ({{ $pet->adoptionApplications->count() }})">
-                                                    <i class="fas fa-clipboard-list mr-1"></i>
-                                                    Solicitudes
-                                                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                                                        {{ $pet->adoptionApplications->count() }}
-                                                    </span>
-                                                </button>
-                                            @endif
-                                        @endcan
                                     </div>
+                                    
+                                    <!-- Solicitudes de adopción -->
+                                    @can('viewApplications', $pet)
+                                        @if($pet->adoptionApplications && $pet->adoptionApplications->count() > 0)
+                                            <button wire:click="showApplications({{ $pet->id }})" 
+                                                    class="w-full text-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 dark:bg-purple-900/50 dark:text-purple-300 dark:hover:bg-purple-800/50 transition duration-200 relative"
+                                                    title="Ver solicitudes ({{ $pet->adoptionApplications->count() }})">
+                                                <i class="fas fa-clipboard-list mr-1"></i>
+                                                Ver solicitudes ({{ $pet->adoptionApplications->count() }})
+                                            </button>
+                                        @endif
+                                    @endcan
                                 </div>
                             @else
-                                <!-- Panel normal para adoptantes y usuarios sin permisos administrativos -->
+                                <!-- Panel normal para adoptantes -->
                                 @can('applyForAdoption', $pet)
                                     @if($pet->adoption_status === 'available')
                                         @php
                                             $userApplication = $this->getUserApplicationStatus($pet->id);
                                         @endphp
                                         @if($userApplication)
-                                            <div class="space-y-2">
-                                                <button disabled
-                                                        class="block w-full text-center px-4 py-2 rounded bg-gray-500/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
-                                                    <i class="fas fa-clock mr-2"></i>Solicitud enviada
-                                                </button>
-                                                <button wire:click="showPetDetails({{ $pet->id }})" 
-                                                        class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm">
-                                                    <i class="fas fa-eye mr-2"></i>Ver detalles
-                                                </button>
-                                            </div>
+                                            <button disabled
+                                                    class="block w-full text-center px-4 py-2 rounded bg-gray-500/80 text-white font-medium cursor-not-allowed backdrop-blur-sm mb-2">
+                                                <i class="fas fa-clock mr-2"></i>Solicitud enviada
+                                            </button>
                                         @else
-                                            <div class="space-y-2">
-                                                <a href="{{ route('adoption.create', $pet) }}" 
-                                                   class="block w-full text-center px-4 py-2 rounded bg-gradient-to-r from-[#216300] to-[#185514] text-white font-medium hover:from-[#5cb132]/70 hover:to-[#185514]/70 transition duration-200 shadow-lg">
-                                                    <i class="fas fa-heart mr-2"></i>Solicitar adopción
-                                                </a>
-                                                <button wire:click="showPetDetails({{ $pet->id }})" 
-                                                        class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm">
-                                                    <i class="fas fa-eye mr-2"></i>Ver detalles
-                                                </button>
-                                            </div>
+                                            <a href="{{ route('adoption.create', $pet) }}" 
+                                               class="block w-full text-center px-4 py-2 rounded bg-gradient-to-r from-[#216300] to-[#185514] text-white font-medium hover:from-[#5cb132]/70 hover:to-[#185514]/70 transition duration-200 shadow-lg mb-2">
+                                                <i class="fas fa-heart mr-2"></i>Solicitar adopción
+                                            </a>
                                         @endif
                                     @endif
                                 @else
-                                    <!-- Solo ver detalles para usuarios sin permisos de adopción -->
-                                    <div class="space-y-2">
-                                        @if($pet->adoption_status === 'pending')
-                                            <button disabled
-                                                    class="block w-full text-center px-4 py-2 rounded bg-orange-500/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
-                                                <i class="fas fa-hourglass-half mr-2"></i>En proceso de adopción
-                                            </button>
-                                        @elseif($pet->adoption_status === 'adopted')
-                                            <button disabled
-                                                    class="block w-full text-center px-4 py-2 rounded bg-blue-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
-                                                <i class="fas fa-check-circle mr-2"></i>Ya adoptado
-                                            </button>
-                                        @else
-                                            <button disabled
-                                                    class="block w-full text-center px-4 py-2 rounded bg-gray-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
-                                                <i class="fas fa-ban mr-2"></i>No disponible
-                                            </button>
-                                        @endif
-                                        <button wire:click="showPetDetails({{ $pet->id }})" 
-                                                class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm">
-                                            <i class="fas fa-eye mr-2"></i>Ver detalles
+                                    <!-- Estado para usuarios sin permisos de adopción -->
+                                    @if($pet->adoption_status === 'pending')
+                                        <button disabled
+                                                class="block w-full text-center px-4 py-2 rounded bg-orange-500/80 text-white font-medium cursor-not-allowed backdrop-blur-sm mb-2">
+                                            <i class="fas fa-hourglass-half mr-2"></i>En proceso de adopción
                                         </button>
-                                    </div>
+                                    @elseif($pet->adoption_status === 'adopted')
+                                        <button disabled
+                                                class="block w-full text-center px-4 py-2 rounded bg-blue-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm mb-2">
+                                            <i class="fas fa-check-circle mr-2"></i>Ya adoptado
+                                        </button>
+                                    @elseif($pet->adoption_status === 'inactive')
+                                        <button disabled
+                                                class="block w-full text-center px-4 py-2 rounded bg-gray-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm mb-2">
+                                            <i class="fas fa-ban mr-2"></i>No disponible
+                                        </button>
+                                    @endif
                                 @endcan
                             @endcan
                         @else
                             <!-- Panel para usuarios no autenticados -->
                             @if($pet->adoption_status === 'available')
-                                <div class="space-y-2">
-                                    <a href="{{ route('login') }}" 
-                                       class="block w-full text-center px-4 py-2 rounded bg-gray-500/80 text-white font-medium hover:bg-gray-600/80 transition duration-200 backdrop-blur-sm">
-                                        <i class="fas fa-sign-in-alt mr-2"></i>Inicia sesión para adoptar
-                                    </a>
-                                    <button wire:click="showPetDetails({{ $pet->id }})" 
-                                            class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm">
-                                        <i class="fas fa-eye mr-2"></i>Ver detalles
-                                    </button>
-                                </div>
+                                <a href="{{ route('login') }}" 
+                                   class="block w-full text-center px-4 py-2 rounded bg-gray-500/80 text-white font-medium hover:bg-gray-600/80 transition duration-200 backdrop-blur-sm mb-2">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Inicia sesión para adoptar
+                                </a>
                             @else
-                                <div class="space-y-2">
-                                    <button disabled
-                                            class="block w-full text-center px-4 py-2 rounded bg-gray-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm">
-                                        <i class="fas fa-ban mr-2"></i>No disponible
-                                    </button>
-                                    <button wire:click="showPetDetails({{ $pet->id }})" 
-                                            class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm">
-                                        <i class="fas fa-eye mr-2"></i>Ver detalles
-                                    </button>
-                                </div>
+                                <button disabled
+                                        class="block w-full text-center px-4 py-2 rounded bg-gray-400/80 text-white font-medium cursor-not-allowed backdrop-blur-sm mb-2">
+                                    <i class="fas fa-ban mr-2"></i>No disponible
+                                </button>
                             @endif
                         @endauth
+                        
+                        <!-- BOTÓN ÚNICO "VER DETALLES" - SIEMPRE PRESENTE -->
+                        <a href="{{ route('pets.show', $pet) }}" 
+                           class="block w-full text-center px-4 py-2 rounded bg-blue-500/80 text-white font-medium hover:bg-blue-600/80 transition duration-200 backdrop-blur-sm"
+                           title="Ver información completa de {{ $pet->name }}"
+                           data-pet-link="true">
+                            <i class="fas fa-eye mr-2"></i>Ver detalles
+                        </a>
                     </div>
                 </div>
             </div>

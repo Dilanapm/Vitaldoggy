@@ -159,6 +159,18 @@
                     }
                 });
             });
+
+            // No interceptar enlaces de pets
+            const petDetailLinks = document.querySelectorAll('a[href*="/mascotas/"]');
+            petDetailLinks.forEach(link => {
+                // Remover cualquier event listener que pueda interferir
+                link.style.pointerEvents = 'auto';
+                // Asegurar que la navegación funcione normalmente
+                link.addEventListener('click', function(e) {
+                    // No prevenir el comportamiento por defecto para estos enlaces
+                    e.stopPropagation();
+                });
+            });
         });
     </script>
 

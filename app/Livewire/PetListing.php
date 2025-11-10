@@ -331,4 +331,12 @@ class PetListing extends Component
             'shelters' => $this->getSheltersForFilter(),
         ]);
     }
+
+    /**
+     * Redirigir a la página de detalles de la mascota
+     */
+    public function redirectToPetDetails($petId)
+    {
+        return redirect()->route('pets.show', $petId);
+    }
 }

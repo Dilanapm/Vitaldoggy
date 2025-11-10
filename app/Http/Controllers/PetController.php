@@ -14,4 +14,15 @@ class PetController extends Controller
     {
         return view('pets.index');
     }
+
+    /**
+     * Muestra los detalles de una mascota específica.
+     */
+    public function show(Pet $pet)
+    {
+        // Cargar las relaciones necesarias
+        $pet->load(['photos', 'shelter']);
+        
+        return view('pets.show', compact('pet'));
+    }
 }

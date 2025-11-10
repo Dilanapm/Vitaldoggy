@@ -18,9 +18,9 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Ruta pública para el listado de mascotas
+// Rutas de mascotas
 Route::get('/mascotas', [PetController::class, 'index'])->name('pets.index');
-
+Route::get('/mascotas/{pet}', [PetController::class, 'show'])->name('pets.show');
 // Rutas públicas para refugios
 Route::get('/refugios', [ShelterController::class, 'index'])->name('shelters.index');
 Route::get('/refugios/{shelter}', [ShelterController::class, 'show'])->name('shelters.show');
