@@ -25,6 +25,12 @@ Route::get('/mascotas/{pet}', [PetController::class, 'show'])->name('pets.show')
 Route::get('/refugios', [ShelterController::class, 'index'])->name('shelters.index');
 Route::get('/refugios/{shelter}', [ShelterController::class, 'show'])->name('shelters.show');
 
+// Rutas de donaciones
+Route::get('/donaciones', [App\Http\Controllers\DonationController::class, 'index'])->name('donations.index');
+Route::get('/donaciones/crear/{shelter?}', [App\Http\Controllers\DonationController::class, 'create'])->name('donations.create');
+Route::post('/donaciones', [App\Http\Controllers\DonationController::class, 'store'])->name('donations.store');
+Route::get('/donaciones/exito', [App\Http\Controllers\DonationController::class, 'success'])->name('donations.success');
+
 // Ruta pública para servicios
 Route::get('/servicios', [ServiceController::class, 'index'])->name('services.index');
 

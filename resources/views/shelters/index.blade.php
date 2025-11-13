@@ -68,7 +68,7 @@
                                 <div class="mt-4">
                                     <a href="{{ route('shelters.show', $shelter) }}" 
                                        class="w-full inline-block text-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition duration-200">
-                                        Ver mascotas
+                                        Ver mas información
                                     </a>
                                 </div>
                             </div>

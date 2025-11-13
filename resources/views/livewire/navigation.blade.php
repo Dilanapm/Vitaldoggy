@@ -33,8 +33,8 @@
                                 <span class="text-xs opacity-75 block">{{ Str::limit($this->getCaretakerShelter()->name, 20) }}</span>
                             @endif
                         </a>
-                        <a href="#donaciones" 
-                            class="{{ $this->isActiveRoute(['donaciones', 'donaciones/*']) ? 'text-primary dark:text-primary font-semibold' : 'text-white dark:text-white hover:text-orange-200 dark:hover:text-primary' }} transition duration-200 font-medium">
+                        <a href="{{ route('donations.index') }}" 
+                            class="{{ $this->isActiveRoute(['donations.*', 'donaciones.*']) ? 'text-primary dark:text-primary font-semibold' : 'text-white dark:text-white hover:text-orange-200 dark:hover:text-primary' }} transition duration-200 font-medium">
                             Donaciones
                         </a>
                     </nav>
@@ -198,8 +198,8 @@
                                     </div>
                                 @endif
                             </a>
-                            <a href="#donaciones" 
-                                class="{{ $this->isActiveRoute(['donaciones', 'donaciones/*']) ? 'bg-primary/10 text-primary border-l-4 border-primary font-semibold' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} block px-4 py-2 rounded-md transition duration-200">
+                            <a href="{{ route('donations.index') }}" 
+                                class="{{ $this->isActiveRoute(['donations.*', 'donaciones.*']) ? 'bg-primary/10 text-primary border-l-4 border-primary font-semibold' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} block px-4 py-2 rounded-md transition duration-200">
                                 Donaciones
                             </a>
                         </div>
